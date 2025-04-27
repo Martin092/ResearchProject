@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use("tkagg") # delete if that throws error
 import matplotlib.pyplot as plt
 
-class NormalEnv(Environment):
+class UniformRewardEnv(Environment):
     def __init__(self, agent, d):
         super().__init__(agent, d)
 
@@ -50,7 +50,7 @@ class ETC(Agent):
 
 
 agent = ETC(np.arange(5), 1000)
-env = NormalEnv(agent, 1)
+env = UniformRewardEnv(agent, 1)
 agent.set_env(env)
 res = agent.run()
 
