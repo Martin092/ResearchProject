@@ -3,6 +3,10 @@ import numpy as np
 
 class Environment(ABC):
     def __init__(self, agent, d):
+        '''
+        :param agent: The agent that
+        :param d: Dimensionality of theta
+        '''
         self.agent = agent
         self.d = d
         self.contexts = [self.generate_context()]
@@ -36,6 +40,10 @@ class Environment(ABC):
 
 class Agent(ABC):
     def __init__(self, actions, T: int):
+        '''
+        :param actions: Array of the actions of the agent
+        :param T: Horizon i.e. max number of pulls
+        '''
         self.T = T
         self.t = 0
         self.actions = actions
@@ -43,6 +51,13 @@ class Agent(ABC):
         self.history = []
 
     def set_env(self, env: Environment):
+        '''
+        Resets the agent by giving it a new environment and clearing history
+        :param env:
+        :return:
+        '''
+        self.t = 0
+        self.history = []
         self.env = env
 
     @abstractmethod
