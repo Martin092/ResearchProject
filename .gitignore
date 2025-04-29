@@ -1,2 +1,5 @@
 # Environments
 .venv/*
+
+# Ignore the generated results
+results/*

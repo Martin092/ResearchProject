@@ -1,7 +1,7 @@
 from Environments import LinearEnvironment
 from Learners import ETCLearner
+from utility.logger import ResultLogger
 
-import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -9,6 +9,8 @@ def main():
 
 
     print("Beginning a Bandit Simulation")
+
+    simulation_name = "Example_Simulation"
 
     env = LinearEnvironment({
         "d" : 2,
@@ -20,7 +22,10 @@ def main():
 
     learner = ETCLearner(24, {})
 
-    learner.run(env)
+    logger = ResultLogger(simulation_name)
+    logger.new_log()
+
+    learner.run(env, logger)
     rewards = learner.cum_reward()
     cum_regret = env.get_cumulative_regret()
 

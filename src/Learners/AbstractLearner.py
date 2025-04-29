@@ -12,7 +12,7 @@ class AbstractLearner(ABC):
         self.history = []
 
     @abstractmethod
-    def run(self, env : AbstractEnvironment):
+    def run(self, env : AbstractEnvironment, logger):
         pass
 
     @abstractmethod
