@@ -7,8 +7,6 @@ from typing import Optional
 class ResultLogger:
 
     def __init__(self, name):
-
-
         self.base_dir = "../results"
         self.fields = ["Round", "Context", "Action", "Reward", "Cumulative Regret", "Time"]
         self.name = name
@@ -31,7 +29,7 @@ class ResultLogger:
         row = [t, context, action, reward, regret, datetime.now().strftime("%Y/%m/%d-%H:%M:%S")]
 
         if not self.log_file_path:
-            raise RuntimeError("Log file not initialized. Call create_log() first.")
+            raise RuntimeError("Log file not initialized. Call new_log() first.")
 
         with open(self.log_file_path, mode="a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
