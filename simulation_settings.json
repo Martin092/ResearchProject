@@ -1,0 +1,66 @@
+{
+  "name" : "Simulation Example",
+
+  "simulations" : [
+    {
+      "name" : "ETC with T=30",
+
+      "env" : "LinearEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 1000,
+      "horizon" : 30,
+
+      "env_config" : {
+        "d" : 2,
+        "action_set" : [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]],
+        "true_theta" : [5, -3],
+        "sigma" : 1,
+        "k" : 12
+      },
+      "learner_config" : {
+
+      }
+    },
+    {
+      "name" : "ETC with T=50",
+
+      "env" : "LinearEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 10,
+      "horizon" : 50,
+
+      "env_config" : {
+        "d" : 2,
+        "action_set" : [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]],
+        "true_theta" : [5, -3],
+        "sigma" : 1,
+        "k" : 12
+      },
+      "learner_config" : {
+
+      }
+    },
+    {
+      "name" : "ETC with T=70",
+
+      "env" : "LinearEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 10,
+      "horizon" : 70,
+
+      "env_config" : {
+        "d" : 2,
+        "action_set" : [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]],
+        "true_theta" : [5, -3],
+        "sigma" : 1,
+        "k" : 12
+      },
+      "learner_config" : {
+
+      }
+    }
+  ]
+}

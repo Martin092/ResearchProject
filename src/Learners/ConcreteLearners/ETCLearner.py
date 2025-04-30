@@ -30,7 +30,7 @@ class ETCLearner(AbstractLearner):
 
             # Log the actions
             if logger is not None:
-                logger.log(t, context, action, reward, env.cum_regret)
+                logger.log(t, reward, env.cum_regret)
 
             self.history.append((action, context, reward))
             self.t += 1

@@ -1,13 +1,25 @@
 from Environments import LinearEnvironment
 from Learners import ETCLearner
-from utility.logger import ResultLogger
+from utility.Logger import ResultLogger
+from utility.SettingsSimulator import SettingsSimulator
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 def main():
 
+    #simple_example()
+    complex_simulation()
 
+
+def complex_simulation():
+
+    settings_dir = ".."
+    simulator = SettingsSimulator(settings_dir)
+
+    simulator.simulate_all()
+
+def simple_example():
     print("Beginning a Bandit Simulation")
 
     simulation_name = "Example_Simulation"
@@ -39,6 +51,7 @@ def main():
     plt.title("Regret")
     plt.plot(cum_regret)
     plt.show()
+
 
 if __name__ == "__main__":
     main()
