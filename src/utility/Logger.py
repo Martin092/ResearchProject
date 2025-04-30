@@ -52,3 +52,6 @@ class ResultLogger:
     def set_simulation(self, name, trial):
         self.curr_sim_name = name
         self.curr_sim_trial = trial
+
+    def get_results_dir(self, file_name : str = "") -> str:
+        return os.path.join(self.log_dir, file_name)

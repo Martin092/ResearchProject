@@ -5,6 +5,7 @@ from src.Learners import AbstractLearner
 
 import os.path
 import json
+from datetime import datetime
 from tqdm import trange
 
 
@@ -14,12 +15,15 @@ class SettingsSimulator:
     def __init__(self, settings_dir):
 
         self.settings_dir = settings_dir
-        self.settings_path = os.path.join(settings_dir, "simulation_settings.json")
+        self.filename = "simulation_settings.json"
+        self.settings_path = os.path.join(settings_dir, self.filename)
 
         self._read_settings()
 
         self.logger = ResultLogger(self.name)
         self.logger.new_log()
+
+        self._replicate_settings(self.logger.get_results_dir(self.filename))
 
 
     def _read_settings(self):
@@ -40,6 +44,27 @@ class SettingsSimulator:
         # Make sure that simulation names are unique
         if len(simulation_names) != len(set(simulation_names)):
             raise RuntimeError("Simulation names are not unique")
+
+        self.run_names = simulation_names
+
+    def _replicate_settings(self, file_path : str):
+
+        # Determine the total number of trials
+        total_trials = sum(map(lambda x : x["trials"], self.settings))
+
+        data = {
+            "name" : self.name,
+            "date" : datetime.now().strftime("%Y/%m/%d-%H:%M:%S"),
+
+            "number of simulations" : self.num_simulations,
+            "number of trials" : total_trials,
+            "simulation names" : self.run_names,
+
+            "simulations" : self.settings
+        }
+
+        with open(file_path, mode="w", encoding="utf-8") as f:
+            json.dump(data, f, indent = 4)
 
 
     def simulate_next(self):
