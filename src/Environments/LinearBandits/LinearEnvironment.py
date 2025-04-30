@@ -36,4 +36,4 @@ class LinearEnvironment(AbstractEnvironment):
 
         empirical_regret = best_reward - reward
         self.cum_regret += empirical_regret
-        self.regret.append(self.cum_regret)
+        self.regret.append(empirical_regret)

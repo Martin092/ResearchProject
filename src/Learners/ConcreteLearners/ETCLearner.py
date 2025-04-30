@@ -18,7 +18,7 @@ class ETCLearner(AbstractLearner):
         self.d = env.get_ambient_dim()
         self.k = env.k
 
-        for t in range(self.T):
+        for t in range(1, self.T + 1):
 
             context = env.generate_context()
             action = self.select_action(context)
@@ -30,7 +30,7 @@ class ETCLearner(AbstractLearner):
 
             # Log the actions
             if logger is not None:
-                logger.log(t, reward, env.cum_regret)
+                logger.log(t, reward, env.regret[-1])
 
             self.history.append((action, context, reward))
             self.t += 1

@@ -1,4 +1,5 @@
 from src.utility.Logger import ResultLogger
+from src.utility.Visualizer import Visualizer
 from src import Environments, Learners
 from src.Environments import AbstractEnvironment
 from src.Learners import AbstractLearner
@@ -24,6 +25,7 @@ class SettingsSimulator:
         self.logger.new_log()
 
         self._replicate_settings(self.logger.get_results_dir(self.filename))
+        self.visualizer : Visualizer = Visualizer(self.logger.log_dir, self.do_export, self.do_show)
 
 
     def _read_settings(self):
@@ -34,6 +36,8 @@ class SettingsSimulator:
         assert data["name"] is not None
 
         self.name = data["name"]
+        self.do_export = data["export_figures"]
+        self.do_show = data["show_figures"]
         self.settings = data["simulations"]
 
         self.curr_simulation = 0
@@ -99,6 +103,8 @@ class SettingsSimulator:
 
         while self._has_next_simulation():
             self.simulate_next()
+
+        self.visualizer.generate_graphs()
 
     def _has_next_simulation(self):
         return self.curr_simulation < self.num_simulations

@@ -8,7 +8,7 @@ class ResultLogger:
 
     def __init__(self, name):
         self.base_dir = "../results"
-        self.fields = ["Name", "trial", "Round", "Context", "Action", "Reward", "Cumulative Regret", "Time"]
+        self.fields = ["Name", "Trial", "Round", "Context", "Action", "Reward", "Regret", "Time"]
         self.name = name
         self.log_dir: Optional[str] = None
         self.log_file_path: Optional[str] = None
