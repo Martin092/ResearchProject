@@ -12,7 +12,7 @@
       "learner" : "ETCLearner",
 
       "trials" : 20,
-      "horizon" : 30,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 2,
@@ -22,7 +22,7 @@
         "k" : 12
       },
       "learner_config" : {
-
+        "N": 3
       }
     },
     {
@@ -32,7 +32,7 @@
       "learner" : "ETCLearner",
 
       "trials" : 20,
-      "horizon" : 30,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 2,
@@ -42,7 +42,7 @@
         "k" : 12
       },
       "learner_config" : {
-
+        "N": 3
       }
     },
     {
@@ -52,7 +52,7 @@
       "learner" : "ETCLearner",
 
       "trials" : 20,
-      "horizon" : 30,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 2,
@@ -62,7 +62,7 @@
         "k" : 12
       },
       "learner_config" : {
-
+        "N": 3
       }
     }
   ]

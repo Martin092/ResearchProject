@@ -2,7 +2,8 @@ from Environments import LinearEnvironment
 from Learners import ETCLearner
 from utility.Logger import ResultLogger
 from utility.SettingsSimulator import SettingsSimulator
-
+import matplotlib
+matplotlib.use("tkagg")
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,7 +16,7 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations"
-    simulator = SettingsSimulator(settings_dir)
+    simulator = SettingsSimulator(settings_dir, "ETC_exploration_config.json")
 
     simulator.simulate_all()
 

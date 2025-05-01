@@ -10,6 +10,7 @@ class ETCLearner(AbstractLearner):
         self.action_set = None
         self.d = None
         self.k = None
+        self.N = params["N"]
 
 
     def run(self, env : LinearEnvironment, logger = None):
@@ -43,10 +44,10 @@ class ETCLearner(AbstractLearner):
 
 
     def select_action(self, context):
-        if self.t < self.k:
-            return self.action_set[self.t]
+        if self.t < self.N * self.k:
+            return self.action_set[self.t % self.k]
 
-        if self.t == self.k:
+        if self.t == self.N * self.k:
             best_reward = -float('inf')
             for (a, c, r) in self.history:
                 if r > best_reward:
