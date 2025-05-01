@@ -8,8 +8,8 @@ class LinearEnvironment(AbstractEnvironment):
         super().__init__(params)
         self.action_set = params["action_set"]
 
-        if params["true_theta"] is None:
-            self.true_theta = self.generate_theta
+        if "true_theta" not in params.keys():
+            self.true_theta = self.generate_theta()
         else:
             self.true_theta = params["true_theta"]
 

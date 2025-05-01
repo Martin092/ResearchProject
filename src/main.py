@@ -14,7 +14,7 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = ".."
+    settings_dir = "../configurations"
     simulator = SettingsSimulator(settings_dir)
 
     simulator.simulate_all()
