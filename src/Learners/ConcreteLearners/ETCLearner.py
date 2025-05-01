@@ -1,5 +1,8 @@
+import numpy as np
+
 from ..AbstractLearner import AbstractLearner
 from src.Environments import LinearEnvironment
+from sklearn.linear_model import SGDRegressor
 
 class ETCLearner(AbstractLearner):
 
@@ -11,21 +14,21 @@ class ETCLearner(AbstractLearner):
         self.d = None
         self.k = None
         self.N = params["N"]
+        self.regressor = SGDRegressor(penalty='l2', alpha=0.01)
 
 
     def run(self, env : LinearEnvironment, logger = None):
-
-        self.action_set = env.observe_actions()
         self.d = env.get_ambient_dim()
         self.k = env.k
 
         for t in range(1, self.T + 1):
-
+            self.action_set = env.observe_actions()
             context = env.generate_context()
             action = self.select_action(context)
-            features = self.feature_map(action, context)
+            features = self.feature_map(action, context).reshape(1, -1)
 
             reward = env.reveal_reward(features)
+            self.regressor.partial_fit(features, [reward])
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
@@ -40,7 +43,7 @@ class ETCLearner(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return action
+        return np.array(action)
 
 
     def select_action(self, context):
@@ -49,7 +52,8 @@ class ETCLearner(AbstractLearner):
 
         if self.t == self.N * self.k:
             best_reward = -float('inf')
-            for (a, c, r) in self.history:
+            for a in self.action_set:
+                r = self.regressor.predict(self.feature_map(a, context).reshape(1, -1))
                 if r > best_reward:
                     best_reward = r
                     self.optimal_action = a

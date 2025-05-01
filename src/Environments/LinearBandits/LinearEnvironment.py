@@ -19,7 +19,7 @@ class LinearEnvironment(AbstractEnvironment):
         self.k = params["k"]
 
     def reveal_reward(self, action):
-        return np.dot(self.true_theta, action) + np.random.normal(loc=0.0, scale=self.sigma)
+        return np.dot(self.true_theta, action.flatten()) + np.random.normal(loc=0.0, scale=self.sigma)
 
     def generate_context(self):
         return np.random.rand(self.k)
