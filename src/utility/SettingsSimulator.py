@@ -13,10 +13,10 @@ from tqdm import trange
 
 class SettingsSimulator:
 
-    def __init__(self, settings_dir):
+    def __init__(self, settings_dir, filename="simulation_settings.json"):
 
         self.settings_dir = settings_dir
-        self.filename = "simulation_settings.json"
+        self.filename = filename
         self.settings_path = os.path.join(settings_dir, self.filename)
 
         self._read_settings()
