@@ -27,7 +27,7 @@
       }
     },
     {
-      "name" : "Noisy ETC",
+      "name" : "ETC",
 
       "env" : "LinearEnvironment",
       "learner" : "ETCLearner",
@@ -43,7 +43,7 @@
         "k" : 12
       },
       "learner_config" : {
-        "N": 3
+        "N": 2
       }
     }
   ]

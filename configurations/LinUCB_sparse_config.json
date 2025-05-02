@@ -27,7 +27,7 @@
       }
     },
     {
-      "name" : "Noisy ETC",
+      "name" : "ETC",
 
       "env" : "SparseLinearEnvironment",
       "learner" : "ETCLearner",
