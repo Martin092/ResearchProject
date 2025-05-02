@@ -3,3 +3,6 @@
 
 # Ignore the generated results
 results/*
+
+# Byte‑compiled / optimized files
+__pycache__/
