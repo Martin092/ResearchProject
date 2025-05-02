@@ -1,0 +1,50 @@
+{
+  "name" : "LinUCB against ETC sparse data",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "LinUCB",
+
+      "env" : "SparseLinearEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 20,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 100,
+        "actions": 20,
+        "sigma" : 0.1,
+        "sparsity": 0.1,
+        "k" : 12
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 0.01
+      }
+    },
+    {
+      "name" : "Noisy ETC",
+
+      "env" : "SparseLinearEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 20,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 100,
+        "actions": 20,
+        "sigma" : 0.1,
+        "sparsity": 0.1,
+        "k" : 12
+      },
+      "learner_config" : {
+        "N": 3
+      }
+    }
+  ]
+}
