@@ -16,7 +16,7 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations"
-    simulator = SettingsSimulator(settings_dir, "UCB_exploration_config.json")
+    simulator = SettingsSimulator(settings_dir, "LinUCB_config.json")
 
     simulator.simulate_all()
 

@@ -14,12 +14,13 @@ class ETCLearner(AbstractLearner):
         self.d = None
         self.k = None
         self.N = params["N"]
-        self.regressor = SGDRegressor(penalty='l2', alpha=0.01)
+        self.regressor = None
 
 
     def run(self, env : LinearEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
+        self.regressor = SGDRegressor(penalty='l2', alpha=0.01)
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
