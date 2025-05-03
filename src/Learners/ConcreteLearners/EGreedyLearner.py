@@ -43,17 +43,17 @@ class EGreedyLearner(AbstractLearner):
             # Select an action (feature vector) through exploration or exploitation
             context = env.generate_context() # why?
             action = self.select_action(context)
-
             x = np.array(action).reshape(1, -1)
 
             # Compute the reward corresponding to the selected action (feature vector)
             reward = env.reveal_reward(x)
-
-            # Append (action, reward) at round t to history
-            self.history.append(action, reward)
+            y = np.array([reward])
 
             # Update regressor
-            self.regressor.partial_fit(np.array(action).reshape(1, -1), reward)
+            self.regressor.partial_fit(x, y)
+
+            # Append (action, reward) at round t to history
+            self.history.append(action, context, reward)
 
             if logger is not None:
                 logger.log(t, reward, env.regret[-1])
@@ -62,17 +62,18 @@ class EGreedyLearner(AbstractLearner):
 
         # If regressor hasn't been run yet, then the parameter 'coef_' doesn't exist.
         if not hasattr(self.regressor, 'coef_') or np.random.rand() < self.epsilon:
-            return np.random.rand(self.action_set)
+            i = np.random.randint(len(self.action_set))
+            return self.action_set[i]
 
         else:
             # Compute estimated rewards using estimated theta and feature vectors
             estimated_rewards = self.regressor.predict(self.action_set)
             
             # Select action index whose corresponding estimated reward is maximum. 
-            best_idx = np.argmax(estimated_rewards)
+            best_reward_id = np.argmax(estimated_rewards)
             
             # Return feature vector corresponding to selected action. 
-            return self.action_set[best_idx] 
+            return self.action_set[best_reward_id] 
     
     def total_reward(self):
         total = 0
