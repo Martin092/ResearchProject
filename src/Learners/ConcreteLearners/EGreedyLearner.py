@@ -53,7 +53,9 @@ class EGreedyLearner(AbstractLearner):
             self.regressor.partial_fit(x, y)
 
             # Append (action, reward) at round t to history
-            self.history.append(action, context, reward)
+            self.history.append((action, context, reward))
+
+            env.record_regret(reward, self.action_set)
 
             if logger is not None:
                 logger.log(t, reward, env.regret[-1])
