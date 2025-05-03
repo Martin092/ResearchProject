@@ -5,9 +5,9 @@ import numpy as np
 
 class EGreedyLearner(AbstractLearner):
     """
-    Epsilon-greedy learner for a sparse linear bandit:
-    chooses a random action with probability epsilon, otherwise selects the 
-    action with the highest estimated reward based on a sparse, linear model.
+    Epsilon-greedy learner for a sparse linear bandit: chooses a random 
+    action with probability epsilon, otherwise selects the action with 
+    the highest estimated reward based on a sparse, linear model.
 
     Attributes:
         T: Horizon
@@ -15,6 +15,8 @@ class EGreedyLearner(AbstractLearner):
         history: A list of (action, reward) tuples, updated per round
 
         epsilon:
+        action_set:
+        regressor:
     """
     def __init__(self, T: int, params: dict):
         super().__init__(T, params)
@@ -22,10 +24,7 @@ class EGreedyLearner(AbstractLearner):
         self.epsilon = params["epsilon"]
         assert 0 <= self.epsilon <= 1
 
-        self.counts = []
-        self.averages = []
         self.action_set = []
-        self.rewards = []
 
         # Lasso regressor to compute estimated theta (parameter vector)
         self.regressor = SGDRegressor(penalty="l1", alpha=0.01)
@@ -37,47 +36,55 @@ class EGreedyLearner(AbstractLearner):
     def run(self, env: SparseLinearEnvironment, logger = None):
 
         for t in range(1, self.T + 1):
-            
+
             # Generate a new set of actions (feature vectors)
             self.action_set = env.observe_actions()
 
             # Select an action (feature vector) through exploration or exploitation
-            action = self.select_action()
+            context = env.generate_context() # why?
+            action = self.select_action(context)
+
+            x = np.array(action).reshape(1, -1)
 
             # Compute the reward corresponding to the selected action (feature vector)
-            reward = env.reveal_reward(action)
+            reward = env.reveal_reward(x)
 
             # Append (action, reward) at round t to history
             self.history.append(action, reward)
 
+            # Update regressor
+            self.regressor.partial_fit(np.array(action).reshape(1, -1), reward)
+
             if logger is not None:
-                logger.log(t, reward, env.record_regret[-1])
+                logger.log(t, reward, env.regret[-1])
 
-            self.history.append(action, reward)
-            
+    def select_action(self, context):
 
-        # action count
-        self.counts = [0] * len(self.action_set)
-
-
-    def select_action(self):
-
+        # If regressor hasn't been run yet, then the parameter 'coef_' doesn't exist.
         if not hasattr(self.regressor, 'coef_') or np.random.rand() < self.epsilon:
             return np.random.rand(self.action_set)
 
         else:
-            preds = self.regressor.predict(self.action_get)
-            return np.argmax(preds)
-
-
+            # Compute estimated rewards using estimated theta and feature vectors
+            estimated_rewards = self.regressor.predict(self.action_set)
+            
+            # Select action index whose corresponding estimated reward is maximum. 
+            best_idx = np.argmax(estimated_rewards)
+            
+            # Return feature vector corresponding to selected action. 
+            return self.action_set[best_idx] 
+    
     def total_reward(self):
-        return super().total_reward()
+        total = 0
+        for (_, _, reward) in self.history:
+            total += reward
+        return total
     
     def cum_reward(self):
-        return super().cum_reward()
-    
-    def feature_map(self, action, context):
-        return np.array(action)
+        cumulative = []
+        for (_, _, reward) in self.history:
+             cumulative.append[reward]
+        return cumulative
 
 
     
