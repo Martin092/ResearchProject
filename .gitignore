@@ -4,7 +4,7 @@
 # Ignore the generated results
 results/*
 
-.idea/
-
 # Byte‑compiled / optimized files
 __pycache__/
+
+.idea/
