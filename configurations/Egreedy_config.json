@@ -1,0 +1,29 @@
+{
+    "name" : "simulation Example",
+
+    "export_figures" : true,
+    "show_figures" : true,
+
+    "simulations" : [
+        {
+            "name" : "Egreedy 0.1-epsilon 0.1-sparsity",
+
+            "env" : "SparseLinearEnvironment",
+            "learner" : "EGreedyLearner",
+
+            "trials" : 20,
+            "horizon" : 30,
+
+            "env_config" : {
+                "d" : 100,
+                "actions" : 20,
+                "sigma" : 0.1,
+                "sparsity" : 0.1,
+                "k" : 12
+            },
+            "learner_config" : {
+                "epsilon": 0.1
+            }
+        }
+    ]
+}
