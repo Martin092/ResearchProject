@@ -28,7 +28,6 @@ class LinearEnvironment(AbstractEnvironment):
         return np.random.rand(self.d)
 
     def record_regret(self, reward, feature_set):
-
         best_reward = -float('inf')
 
         for a in feature_set:
