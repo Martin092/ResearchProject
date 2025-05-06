@@ -8,7 +8,7 @@ class ResultLogger:
 
     def __init__(self, name):
         self.base_dir = "../results"
-        self.fields = ["Name", "Trial", "Round", "Context", "Action", "Reward", "Regret", "Time"]
+        self.fields = ["Name", "Trial", "Round", "Context", "Action_index", "Action", "Reward", "Regret", "Time"]
         self.name = name
         self.log_dir: Optional[str] = None
         self.log_file_path: Optional[str] = None
@@ -27,9 +27,9 @@ class ResultLogger:
             writer = csv.writer(f)
             writer.writerow(self.fields)
 
-    def log(self, t, context, action, reward, regret):
+    def log_full(self, t, context, action_index, action, reward, regret):
 
-        row = [self.curr_sim_name, self.curr_sim_trial, t, context, action, reward, regret, datetime.now().strftime("%Y/%m/%d-%H:%M:%S")]
+        row = [self.curr_sim_name, self.curr_sim_trial, t, context, action_index, action, reward, regret, datetime.now().strftime("%Y/%m/%d-%H:%M:%S")]
 
         if not self.log_file_path:
             raise RuntimeError("Log file not initialized. Call new_log() first.")
@@ -39,7 +39,7 @@ class ResultLogger:
             writer.writerow(row)
 
     def log(self, t, reward, regret):
-        row = [self.curr_sim_name, self.curr_sim_trial, t, "", "", reward, regret,
+        row = [self.curr_sim_name, self.curr_sim_trial, t, "", "", "", reward, regret,
                datetime.now().strftime("%Y/%m/%d-%H:%M:%S")]
 
         if not self.log_file_path:

@@ -25,7 +25,7 @@ class ETCLearner(AbstractLearner):
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
             context = env.generate_context()
-            action = self.select_action(context)
+            a_index, action = self.select_action(context)
             features = self.feature_map(action, context).reshape(1, -1)
 
             reward = env.reveal_reward(features)
@@ -36,6 +36,7 @@ class ETCLearner(AbstractLearner):
             # Log the actions
             if logger is not None:
                 logger.log(t, reward, env.regret[-1])
+                logger.log_full(t, context, a_index, action, reward, env.regret[-1])
 
             self.history.append((action, context, reward))
             self.t += 1
@@ -44,22 +45,24 @@ class ETCLearner(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action)
+        return np.array(action) + context
 
 
     def select_action(self, context):
         if self.t < self.N * self.k:
-            return self.action_set[self.t % self.k]
+            return self.t % self.k, self.action_set[self.t % self.k]
 
+        best_index = 0
         if self.t == self.N * self.k:
             best_reward = -float('inf')
-            for a in self.action_set:
+            for i, a in enumerate(self.action_set):
                 r = self.regressor.predict(self.feature_map(a, context).reshape(1, -1))
                 if r > best_reward:
                     best_reward = r
                     self.optimal_action = a
+                    best_index = i
 
-        return self.optimal_action
+        return best_index, self.optimal_action
 
     def total_reward(self):
         total = 0

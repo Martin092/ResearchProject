@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 
@@ -17,13 +18,12 @@ class Visualizer:
         self.do_export = do_export
         self.do_show = do_show
 
-
     def generate_graphs(self):
 
         df = pd.read_csv(self.log_filepath, sep=',', header=0, encoding='utf-8')
 
         # Project to reduce compute resources
-        df = df[['Name', 'Trial', 'Round', 'Reward', 'Regret']]
+        # df = df[['Name', 'Trial', 'Round', 'Reward', 'Regret']]
 
         # Sort the dataframe for convenience
         df.sort_values(['Name', 'Trial', 'Round'])
@@ -32,7 +32,7 @@ class Visualizer:
         df['cum_reward'] = df.groupby(['Name', 'Trial'])['Reward'].cumsum()
         df['cum_regret'] = df.groupby(['Name', 'Trial'])['Regret'].cumsum()
         df['cum_min_regret'] = df.groupby(['Name', 'Trial'])['Regret'].cummin()
-        df['cum_avg_regret'] = df['cum_regret']  / df['Round']
+        df['cum_avg_regret'] = df['cum_regret'] / df['Round']
 
         data = (
             df
@@ -52,7 +52,31 @@ class Visualizer:
 
         # Generate The graphs
         self._generate_reward_graph(data)
-        self._generate_regret_graphs(data)
+        self._generate_reward_hist(df)
+        # self._generate_regret_graphs(data)
+
+    def _generate_reward_hist(self, df):
+        names = df['Name'].to_list()
+
+        actions = df[["Name", "Action_index"]]
+        for name in set(names):
+            # time = data.loc[data['Name'] == name, 'Round'].to_numpy()
+            # reward = data.loc[data['Name'] == name,'avg_cum_reward'].to_numpy()
+            # std_reward = data.loc[data['Name'] == name,'std_cum_reward'].to_numpy()
+            vals = actions.loc[actions["Name"] == name]["Action_index"]
+            if vals.isna().all():
+                continue
+
+            plt.figure()
+            plt.hist(vals.to_numpy(), bins=np.arange(vals.min(), vals.max() + 2) - 0.5, align='mid')
+            plt.xlabel('Action index')
+            plt.ylabel('Number of pulls')
+            plt.title(f"Frequency of arm pulls for {name}")
+
+            self.do_export and plt.savefig(os.path.join(self.figures_dir, f"action_distr_{name}.png"), dpi=300, bbox_inches='tight', format='png')
+            self.do_show and (plt.show())
+
+
 
     def _generate_reward_graph(self, data):
 
@@ -85,7 +109,6 @@ class Visualizer:
         plt.figure()
 
         for name in set(names):
-
             time = data.loc[data['Name'] == name,'Round'].to_numpy()
             cum_regret = data.loc[data['Name'] == name,'avg_cum_regret'].to_numpy()
             std_cum_regret = data.loc[data['Name'] == name,'std_cum_regret'].to_numpy()

@@ -18,7 +18,7 @@ class LinearRegression(Regressor):
         self.real_history = np.append(self.real_history, real)
         self.wt = np.vstack((self.wt, w_new))
 
-    def regret(self, w_optimal):
+    def regret(self, w_optimal, reals=None):
         loss = 0
         optimal_loss = 0
         regrets = np.array([])

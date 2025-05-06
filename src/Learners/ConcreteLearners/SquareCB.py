@@ -5,6 +5,7 @@ from src.Environments import AbstractEnvironment
 from sklearn.linear_model import SGDRegressor
 from src.OnlineRegressors.ConcreteRegressors.RidgeRegression import OnlineRidge
 from src.OnlineRegressors.ConcreteRegressors.AdaptiveRegression import AdaptiveRegressor
+from src.OnlineRegressors.ConcreteRegressors.LinearRegression import LinearRegression
 
 class SquareCB(AbstractLearner):
 
@@ -19,14 +20,14 @@ class SquareCB(AbstractLearner):
     def run(self, env : AbstractEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
-        self.oracle = OnlineRidge(self.d)
-        self.learn_rate = 5
+        self.oracle = LinearRegression(self.d, 0.01)
+        self.learn_rate = 0.01
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
             self.mu = len(self.action_set)
             context = env.generate_context()
-            action, pred_reward = self.select_action(context)
+            a_index, action, pred_reward = self.select_action(context)
             features = self.feature_map(action, context).reshape(1, -1)
 
             reward = env.reveal_reward(features)
@@ -36,7 +37,7 @@ class SquareCB(AbstractLearner):
 
             # Log the actions
             if logger is not None:
-                logger.log(t, reward, env.regret[-1])
+                logger.log_full(t, context, a_index, action, reward, env.regret[-1])
 
             self.history.append((action, context, reward))
             self.t += 1
@@ -45,7 +46,7 @@ class SquareCB(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action)
+        return np.array(action) + context
 
 
     def select_action(self, context):
@@ -60,9 +61,8 @@ class SquareCB(AbstractLearner):
             if i != bt:
                 probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[i] - rewards[bt]))
         probabilities[bt] = 1 - np.sum(probabilities)
-        print(probabilities)
         index = np.random.choice(np.arange(len(self.action_set)), size=1, p=probabilities)
-        return self.action_set[index[0]], rewards[index]
+        return index[0], self.action_set[index[0]], rewards[index]
 
 
     def total_reward(self):
