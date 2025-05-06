@@ -23,3 +23,8 @@ class Regressor(ABC):
     @abstractmethod
     def regret(self, w_optimal, reals=None):
         pass
+
+    def predict_and_fit(self, x, y):
+        pred = self.predict(x)
+        self.update(x, pred, y)
+        return pred

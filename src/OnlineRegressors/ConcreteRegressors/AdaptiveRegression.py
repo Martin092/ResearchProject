@@ -21,23 +21,16 @@ class AdaptiveRegressor(Regressor):
         self.Xt = np.array([])
 
     def predict(self, x):
-        if self.t <= self.t0:
-            self.t += 1
-            return self.w.T @ x
-        elif np.log2(self.t) == int(np.log2(self.t)):
-            # TODO Read what they do here, this is wrong
+        return self.w.T @ x
+
+    def update(self, x, pred, real):
+        if self.t > self.t0 and np.log2(self.t) == int(np.log2(self.t)):
             w_hat = self.dantzig_selector().flatten()
             sorted_args = np.argsort(np.abs(w_hat))
             w_hat[sorted_args[self.d - self.k:]] = 0
             self.w = w_hat.reshape(-1, 1)
-            self.t += 1
-            return self.w.T @ x
-        else:
-            self.t += 1
-            return self.w.T @ x
+        self.t += 1
 
-
-    def update(self, x, pred, real):
         St = np.random.choice(np.arange(self.d), size=self.d - self.k0, replace=False)
         proj = x.copy()
         proj[St] = 0
@@ -67,17 +60,20 @@ class AdaptiveRegressor(Regressor):
 
     def dantzig_selector(self, delta=0.05, C=1):
         t_inv = 1/self.t
-        a = t_inv * (self.Xt.T @ (self.real_history.reshape(-1, 1)))
+        # a = t_inv * (self.Xt.T @ (self.real_history.reshape(-1, 1)))
         Dt_diag = (1 - self.k0 / self.d) * (self.Xt.T @ self.Xt).diagonal()
         Dt = sp.diags(Dt_diag)
-        B = t_inv * (-self.Xt.T @ self.Xt + Dt)
+        # B = t_inv * (-self.Xt.T @ self.Xt + Dt)
 
         denominator = self.d * np.log(self.t * self.d / delta)
-        lhs = C * np.sqrt(denominator/(self.t * self.k0)) * (self.sigma + self.d / self.k0)
+        lhs = C * np.sqrt(denominator/(self.t * self.k0)) * (self.sigma + self.d / self.k0) * np.ones((self.d, 1))
 
         # maybe normalize
         w = cp.Variable((self.d, 1))
-        constraints = [cp.norm(a + B @ w, 'inf') <= lhs]
+        constraints = [t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w <= lhs,
+                       t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w >= -lhs]
+
+        # constraints = [cp.norm(a + B @ w, 'inf') <= lhs]
         obj = cp.Minimize(cp.norm(w, 1))
         prob = cp.Problem(obj, constraints)
         result = prob.solve(verbose=False)

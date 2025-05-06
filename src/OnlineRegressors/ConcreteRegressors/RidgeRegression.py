@@ -13,7 +13,7 @@ class OnlineRidge(Regressor):
 
     def predict(self, x):
         # dot product
-        return (self.w.T @ x)[0][0]
+        return (self.w.T @ x.reshape(-1, 1))
 
     def update(self, x, pred, real):
         Mx = self.M @ x
