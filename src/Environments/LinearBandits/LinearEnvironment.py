@@ -22,7 +22,7 @@ class LinearEnvironment(AbstractEnvironment):
         return np.dot(self.true_theta, action.flatten()) + np.random.normal(loc=0.0, scale=self.sigma)
 
     def generate_context(self):
-        return np.random.rand(self.k)
+        return np.random.rand(self.d)
 
     def generate_theta(self):
         return np.random.rand(self.d)

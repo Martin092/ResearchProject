@@ -37,7 +37,7 @@ class AdaptiveRegressor(Regressor):
         proj = (self.d / self.k0) * proj  # projection so set all other values to 0
         proj = sp.csr_matrix(proj)
         self.x_history.append(x)
-        self.real_history = np.append(self.real_history, real)
+        self.real_history = np.array([real]) if self.real_history.shape[0] == 0 else np.vstack((self.real_history, real))
         self.pred_history = np.append(self.pred_history, pred)
 
         if self.Xt.shape[0] == 0:
@@ -58,7 +58,12 @@ class AdaptiveRegressor(Regressor):
 
         return regrets
 
-    def dantzig_selector(self, delta=0.05, C=1):
+    def dantzig_selector(self, delta=0.15, C=0.03):
+        # TODO shapes in the constraint are weird, check what is going on there
+        resid0 = (1 / self.t) * (self.Xt.T @ self.real_history)
+        hlhs = C * np.sqrt(self.d * np.log(self.t * self.d / delta) / (self.t * self.k0)) * (self.sigma + self.d / self.k0)
+        print("‖resid0‖∞ =", np.max(np.abs(resid0)), " and rhs = ", hlhs)
+
         t_inv = 1/self.t
         # a = t_inv * (self.Xt.T @ (self.real_history.reshape(-1, 1)))
         Dt_diag = (1 - self.k0 / self.d) * (self.Xt.T @ self.Xt).diagonal()
@@ -70,11 +75,12 @@ class AdaptiveRegressor(Regressor):
 
         # maybe normalize
         w = cp.Variable((self.d, 1))
+        print("lhs shape:", (t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w).shape, "rhs shape:", lhs.shape)
         constraints = [t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w <= lhs,
                        t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w >= -lhs]
 
         # constraints = [cp.norm(a + B @ w, 'inf') <= lhs]
         obj = cp.Minimize(cp.norm(w, 1))
         prob = cp.Problem(obj, constraints)
-        result = prob.solve(verbose=False)
+        result = prob.solve(solver=cp.ECOS, abstol=1e-8, reltol=1e-8, feastol=1e-8)
         return w.value

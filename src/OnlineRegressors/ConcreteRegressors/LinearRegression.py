@@ -5,18 +5,18 @@ class LinearRegression(Regressor):
     def __init__(self, d, eta):
         super().__init__(d)
         self.eta = eta
+        self.w = np.zeros((d, 1))
 
     def predict(self, x):
-        pred = np.dot(self.wt[-1], x)
-        self.x_history = np.vstack((self.x_history, x))
-        self.pred_history = np.append(self.pred_history, pred)
+        pred = self.w.T @ x
+        # self.x_history = np.vstack((self.x_history, x))
+        # self.pred_history = np.append(self.pred_history, pred)
         return pred
 
     def update(self, x, pred, real):
-        w = self.wt[-1]
-        w_new = w - self.eta * (pred - real) * x
+        self.w = self.w - self.eta * (pred - real) * x
         self.real_history = np.append(self.real_history, real)
-        self.wt = np.vstack((self.wt, w_new))
+        # self.wt = np.vstack((self.wt, w_new))
 
     def regret(self, w_optimal, reals=None):
         loss = 0

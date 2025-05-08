@@ -52,10 +52,11 @@ class Visualizer:
 
         # Generate The graphs
         self._generate_reward_graph(data)
-        self._generate_reward_hist(df)
+        self._generate_arms_hist(df)
+        self._generate_reward_per_arm_graph(df)
         # self._generate_regret_graphs(data)
 
-    def _generate_reward_hist(self, df):
+    def _generate_arms_hist(self, df):
         names = df['Name'].to_list()
 
         actions = df[["Name", "Action_index"]]
@@ -76,7 +77,24 @@ class Visualizer:
             self.do_export and plt.savefig(os.path.join(self.figures_dir, f"action_distr_{name}.png"), dpi=300, bbox_inches='tight', format='png')
             self.do_show and (plt.show())
 
+    def _generate_reward_per_arm_graph(self, df):
+        names = df['Name'].to_list()
+        df = df[["Name", "Action_index", "Reward"]]
+        vals = df.groupby(['Name', 'Action_index'])['Reward'].sum()
+        for name in set(names):
+            data = vals[name]
 
+            plt.figure()
+            plt.bar(np.arange(1, data.shape[0] + 1), data.to_numpy())
+            plt.xlabel('Action')
+            plt.ylabel('Reward')
+            plt.title(f"Reward per arm for {name}")
+            # plt.grid()
+            # plt.show()
+
+        self.do_export and plt.savefig(os.path.join(self.figures_dir, "reward_per_action.png"), dpi=300,
+                                       bbox_inches='tight', format='png')
+        self.do_show and plt.show()
 
     def _generate_reward_graph(self, data):
 

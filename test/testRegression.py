@@ -8,26 +8,25 @@ from src.OnlineRegressors.AbstractRegressor import Regressor
 from src.OnlineRegressors.ConcreteRegressors.LinearRegression import LinearRegression
 from src.OnlineRegressors.ConcreteRegressors.RidgeRegression import OnlineRidge
 from src.OnlineRegressors.ConcreteRegressors.AdaptiveRegression import AdaptiveRegressor
+from src.OnlineRegressors.ConcreteRegressors.SGDWrapper import SGDWrapper
 matplotlib.use("tkagg")
 from tqdm import tqdm
 
 
-def test_adaptive(reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star=None):
+def test_adaptive(Xt, reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star=None):
     if w_star == None:
         w_star = sp.random(d, 1, density=density)
         w_star /= sp.linalg.norm(w_star, 1)
 
     reals = np.zeros(n)
-
     start = time.time()
     for i in tqdm(range(n)):
-        xt = np.random.normal(0, 1, size=(d, 1))
-        xt_noisy = xt + np.random.normal(0, noise)
-        y_pred = reg.predict(xt_noisy)
-        y_real = w_star.T @ xt + np.random.normal(0, noise)
+        xt = Xt[i].reshape(-1, 1)
+        y_pred = reg.predict(xt)
+        y_real = (w_star.T @ xt)[0][0] + np.random.normal(0, noise)
         reals[i] = w_star.T @ xt
-        # reals[i] = y_real
-        reg.update(xt_noisy, y_pred, y_real)
+        reals[i] = y_real
+        reg.update(xt, y_pred, y_real)
     runtime = time.time() - start
 
     mse = np.mean((reg.pred_history - reals) ** 2)
@@ -42,33 +41,36 @@ def test_adaptive(reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star=Non
     return cumulative_mse, runtime, reals
 
 
-d = 100
+d = 50
 density = 0.1
-noise = 1
-
-w_star = sp.random(d, 1, density=density)
-w_star /= sp.linalg.norm(w_star, 1)
-
-
+noise = 0.2
 eps = 0.2
 k = density * d
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k)) + 2
 n *= 2
-n=100
+n = 1000
 print(n)
+
+w_star = sp.random(d, 1, density=density)
+w_star /= sp.linalg.norm(w_star, 1)
+
+Xt = np.random.normal(0, 1, size=(n, d))
+
 # t0 = k * np.log(d) * np.log(n)
 t0 = 1
+print("t0 is ", t0)
+# t0 = 1
 params = {"sigma": noise,
           "k": int(density * d),
-          "k0": int((density+0.05) * d),
+          "k0": int(0.7 * d),
           "t0": t0
     }
 
 reg1 = AdaptiveRegressor(d, params)
 reg2 = OnlineRidge(d)
 
-res1, t1, reals1 = test_adaptive(reg1, d, density, noise, n, w_star=w_star)
-res2, t2, reals2 = test_adaptive(reg2, d, density, noise, n, w_star=w_star)
+res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
+res2, t2, reals2 = test_adaptive(Xt, reg2, d, density, noise, n, w_star=w_star)
 
 print(f"Adaptive runtime: {t1}")
 print(f"Ridge runtime: {t2}")
