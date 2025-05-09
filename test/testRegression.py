@@ -40,13 +40,19 @@ def test_adaptive(Xt, reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star
     cumulative_mse = np.cumsum((reg.pred_history - reals) ** 2) / np.arange(1, len(reg.pred_history) + 1)
     return cumulative_mse, runtime, reals
 
+def satisfies_RIP(X, w, eps, k):
+    left = (1 - eps) * sp.linalg.norm(w)
+    right = (1 + eps) * sp.linalg.norm(w)
+    mid = (1 / np.sqrt(X.shape[0])) * np.linalg.norm(X @ w)
+    return left <= mid <= right
 
-d = 50
-density = 0.1
-noise = 0.2
+
+d = 100
+density = 0.05
+noise = 0.05
 eps = 0.2
-k = density * d
-n = int((1 / (eps * eps)) * k * np.log(eps * d / k)) + 2
+k = int(density * d)
+n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
 n = 1000
 print(n)
@@ -55,14 +61,13 @@ w_star = sp.random(d, 1, density=density)
 w_star /= sp.linalg.norm(w_star, 1)
 
 Xt = np.random.normal(0, 1, size=(n, d))
-
-# t0 = k * np.log(d) * np.log(n)
-t0 = 1
+print("Xt satisfies RIP: ", satisfies_RIP(Xt, w_star, 1/5, 3*k))
+t0 = k * np.log(d) * np.log(n)
 print("t0 is ", t0)
-# t0 = 1
+t0 = k
 params = {"sigma": noise,
-          "k": int(density * d),
-          "k0": int(0.7 * d),
+          "k": k,
+          "k0": 80,
           "t0": t0
     }
 
@@ -84,6 +89,14 @@ plt.ylabel("MSE")
 plt.title("Average MSE")
 plt.show()
 
+# print("W star is ", w_star.todense())
+# print("POSLR w is ", reg1.w)
+# plt.scatter(reg1.x_history, reals1, label="Real data")
+# plt.scatter(reg1.x_history, reg1.pred_history, label="Predicted")
+# plt.legend()
+# plt.title("Real vs Adaptive")
+# plt.show()
+
 
 plt.plot(reg1.regret(w_star, reals=reals1), label="POSLR")
 plt.plot(reg2.regret(w_star), label="Ridge")
@@ -92,17 +105,7 @@ plt.xlabel("Rounds")
 plt.ylabel("Regret")
 plt.title("Average Regret")
 plt.show()
-#
-#
-# print(w_star.toarray().flatten())
-# print(reg1.w.flatten())
-# plt.scatter(w_star.toarray().flatten(), reg1.w.flatten(), label="POSLR", alpha=0.3)
-# plt.scatter(w_star.toarray().flatten(), reg2.w.flatten(), label="Ridge", alpha=0.3)
-# plt.title("Weights")
-# plt.xlabel("Real value")
-# plt.ylabel("Predicted value")
-# plt.legend()
-# plt.show()
+
 
 
 plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)

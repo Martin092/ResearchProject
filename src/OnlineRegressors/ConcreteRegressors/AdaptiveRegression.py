@@ -1,49 +1,58 @@
-import numpy
-
-from src.OnlineRegressors.AbstractRegressor import Regressor
 import numpy as np
-from scipy.optimize import linprog
 import scipy.sparse as sp
 import cvxpy as cp
+
+from scipy.optimize import linprog
+from src.OnlineRegressors.AbstractRegressor import Regressor
+
 
 class AdaptiveRegressor(Regressor):
     def __init__(self, d, params):
         super().__init__(d)
-        self.x_history = []
+        self.d = d
         self.sigma = params["sigma"]
-        # sparsity of regressors we compare the algorithms performance to
         self.k = params["k"]
-        # number of features we can query each round
         self.k0 = params["k0"]
         self.t0 = params["t0"]
+
         self.t = 1
-        self.w = np.zeros(self.d)
-        self.Xt = np.array([])
+        self.w = np.zeros((d, 1))
+        self.x_history = []
+        self.real_history = np.empty((0, 1))
+        self.pred_history = np.empty(0)
+        self.Xt = sp.csr_matrix((0, d))
 
     def predict(self, x):
-        return self.w.T @ x
+        return float(self.w.T @ x)
 
     def update(self, x, pred, real):
-        if self.t > self.t0 and np.log2(self.t) == int(np.log2(self.t)):
+        if self.t > self.t0 and (self.t & (self.t - 1) == 0):
             w_hat = self.dantzig_selector().flatten()
-            sorted_args = np.argsort(np.abs(w_hat))
-            w_hat[sorted_args[self.d - self.k:]] = 0
+            idx = np.argsort(np.abs(w_hat))
+            w_hat[idx[:self.d - self.k]] = 0
             self.w = w_hat.reshape(-1, 1)
+
+        # Increment time
         self.t += 1
 
-        St = np.random.choice(np.arange(self.d), size=self.d - self.k0, replace=False)
+        # Random projection step
+        mask = np.random.choice(self.d, size=self.d - self.k0, replace=False)
         proj = x.copy()
-        proj[St] = 0
-        proj = (self.d / self.k0) * proj  # projection so set all other values to 0
-        proj = sp.csr_matrix(proj)
-        self.x_history.append(x)
-        self.real_history = np.array([real]) if self.real_history.shape[0] == 0 else np.vstack((self.real_history, real))
-        self.pred_history = np.append(self.pred_history, pred)
+        proj[mask] = 0
+        proj *= self.d / self.k0
+        proj = sp.csr_matrix(proj).reshape(1, -1)
 
-        if self.Xt.shape[0] == 0:
-            self.Xt = proj.reshape(1, -1)
-        else:
-            self.Xt = sp.vstack([self.Xt, proj.reshape(1, -1)])
+        # Record histories
+        self.x_history.append(x)
+        self.pred_history = np.append(self.pred_history, pred)
+        self.real_history = (
+            np.array([[real]])
+            if self.real_history.size == 0
+            else np.vstack((self.real_history, [[real]]))
+        )
+
+        # Stack feature matrix
+        self.Xt = proj if self.Xt.shape[0] == 0 else sp.vstack([self.Xt, proj])
 
     def regret(self, w_optimal, reals=None):
         if reals is None:
@@ -58,29 +67,25 @@ class AdaptiveRegressor(Regressor):
 
         return regrets
 
-    def dantzig_selector(self, delta=0.15, C=0.03):
-        # TODO shapes in the constraint are weird, check what is going on there
-        resid0 = (1 / self.t) * (self.Xt.T @ self.real_history)
-        hlhs = C * np.sqrt(self.d * np.log(self.t * self.d / delta) / (self.t * self.k0)) * (self.sigma + self.d / self.k0)
-        print("‖resid0‖∞ =", np.max(np.abs(resid0)), " and rhs = ", hlhs)
+    def dantzig_selector(self, delta=0.05, C=0.03):
+        t_inv = 1.0 / self.t
+        resid0 = t_inv * (self.Xt.T @ self.real_history)
 
-        t_inv = 1/self.t
-        # a = t_inv * (self.Xt.T @ (self.real_history.reshape(-1, 1)))
+        term = C * np.sqrt(self.d * np.log(self.t * self.d / delta) / (self.t * self.k0))
+        rhs = term * (self.sigma + self.d / self.k0)
+        print("‖resid0‖∞ =", np.max(np.abs(resid0)), "rhs =", rhs)
+
         Dt_diag = (1 - self.k0 / self.d) * (self.Xt.T @ self.Xt).diagonal()
         Dt = sp.diags(Dt_diag)
-        # B = t_inv * (-self.Xt.T @ self.Xt + Dt)
 
-        denominator = self.d * np.log(self.t * self.d / delta)
-        lhs = C * np.sqrt(denominator/(self.t * self.k0)) * (self.sigma + self.d / self.k0) * np.ones((self.d, 1))
+        rhs = rhs * np.ones((self.d, 1))
 
-        # maybe normalize
         w = cp.Variable((self.d, 1))
-        print("lhs shape:", (t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w).shape, "rhs shape:", lhs.shape)
-        constraints = [t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w <= lhs,
-                       t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w >= -lhs]
 
-        # constraints = [cp.norm(a + B @ w, 'inf') <= lhs]
-        obj = cp.Minimize(cp.norm(w, 1))
-        prob = cp.Problem(obj, constraints)
-        result = prob.solve(solver=cp.ECOS, abstol=1e-8, reltol=1e-8, feastol=1e-8)
+        expr = t_inv * self.Xt.T @ (self.real_history - self.Xt @ w) + t_inv * Dt @ w
+        constraints = [expr <= rhs, expr >= -rhs]
+
+        prob = cp.Problem(cp.Minimize(cp.norm(w, 1)), constraints)
+        prob.solve(solver=cp.ECOS, abstol=1e-8, reltol=1e-8, feastol=1e-8)
+
         return w.value
