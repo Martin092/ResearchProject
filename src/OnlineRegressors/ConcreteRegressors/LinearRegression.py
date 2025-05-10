@@ -2,9 +2,9 @@ from src.OnlineRegressors.AbstractRegressor import Regressor
 import numpy as np
 
 class LinearRegression(Regressor):
-    def __init__(self, d, eta):
-        super().__init__(d)
-        self.eta = eta
+    def __init__(self, d, params):
+        super().__init__(d, params)
+        self.eta = params["eta"]
         self.w = np.zeros((d, 1))
 
     def predict(self, x):

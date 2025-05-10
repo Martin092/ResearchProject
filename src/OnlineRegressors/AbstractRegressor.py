@@ -5,7 +5,7 @@ import scipy.sparse as sp
 
 
 class Regressor(ABC):
-    def __init__(self, d):
+    def __init__(self, d, params):
         self.x_history = np.empty((0, d))
         self.pred_history = np.array([])
         self.real_history = np.array([])

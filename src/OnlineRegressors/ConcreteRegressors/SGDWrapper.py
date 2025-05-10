@@ -5,9 +5,9 @@ from src.OnlineRegressors.AbstractRegressor import Regressor
 
 
 class SGDWrapper(Regressor):
-    def __init__(self, d):
-        super().__init__(d)
-        self.reg = SGDRegressor(penalty='l2', alpha=0.01)
+    def __init__(self, d, params):
+        super().__init__(d, params)
+        self.reg = SGDRegressor(penalty='l2', alpha=params["l_rate"])
         self.t = 0
 
     def predict(self, x):

@@ -8,12 +8,14 @@ from src.OnlineRegressors.AbstractRegressor import Regressor
 
 class AdaptiveRegressor(Regressor):
     def __init__(self, d, params):
-        super().__init__(d)
+        super().__init__(d, params)
         self.d = d
         self.sigma = params["sigma"]
         self.k = params["k"]
         self.k0 = params["k0"]
         self.t0 = params["t0"]
+        self.C = params["C"]
+        self.delta = params["delta"]
 
         self.t = 1
         self.w = np.zeros((d, 1))
@@ -67,13 +69,13 @@ class AdaptiveRegressor(Regressor):
 
         return regrets
 
-    def dantzig_selector(self, delta=0.05, C=0.03):
+    def dantzig_selector(self):
         t_inv = 1.0 / self.t
-        resid0 = t_inv * (self.Xt.T @ self.real_history)
+        # resid0 = t_inv * (self.Xt.T @ self.real_history)
 
-        term = C * np.sqrt(self.d * np.log(self.t * self.d / delta) / (self.t * self.k0))
+        term = self.C * np.sqrt(self.d * np.log(self.t * self.d / self.delta) / (self.t * self.k0))
         rhs = term * (self.sigma + self.d / self.k0)
-        print("‖resid0‖∞ =", np.max(np.abs(resid0)), "rhs =", rhs)
+        # print("‖resid0‖∞ =", np.max(np.abs(resid0)), "rhs =", rhs)
 
         Dt_diag = (1 - self.k0 / self.d) * (self.Xt.T @ self.Xt).diagonal()
         Dt = sp.diags(Dt_diag)

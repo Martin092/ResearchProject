@@ -2,11 +2,11 @@ from src.OnlineRegressors.AbstractRegressor import Regressor
 import numpy as np
 
 class OnlineRidge(Regressor):
-    def __init__(self, d, lambda_reg=1.0):
-        super().__init__(d)
+    def __init__(self, d, params):
+        super().__init__(d, params)
         self.x_history = []
 
-        self.lambda_reg = lambda_reg
+        self.lambda_reg = params["lambda_reg"]
         self.w = np.zeros((d, 1))
         self.wt = np.array([self.w])
         self.M = np.eye(d) / self.lambda_reg

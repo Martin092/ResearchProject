@@ -1,0 +1,83 @@
+{
+  "name" : "Simulation Example",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB - Basic Regression",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 200,
+        "sparsity":0.8,
+        "noise": 0.1,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 0.2,
+        "reg": "LinearRegression",
+        "params_reg": {
+          "eta": 0.1
+        }
+      }
+    },
+    {
+      "name" : "SquareCB - Ridge",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 200,
+        "sparsity":0.8,
+        "noise": 0.1,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 0.2,
+        "reg": "OnlineRidge",
+        "params_reg": {
+          "lambda_reg": 0.1
+        }
+      }
+    },
+    {
+      "name" : "SquareCB - Adaptive",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 200,
+        "sparsity":0.8,
+        "noise": 0.2,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 0.2,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.1,
+          "k": 160,
+          "k0": 200,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    }
+  ]
+}

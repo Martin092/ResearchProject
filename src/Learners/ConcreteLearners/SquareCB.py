@@ -7,6 +7,7 @@ from src.OnlineRegressors.ConcreteRegressors.RidgeRegression import OnlineRidge
 from src.OnlineRegressors.ConcreteRegressors.AdaptiveRegression import AdaptiveRegressor
 from src.OnlineRegressors.ConcreteRegressors.LinearRegression import LinearRegression
 from src.OnlineRegressors.ConcreteRegressors.SGDWrapper import SGDWrapper
+from src import OnlineRegressors
 
 
 class SquareCB(AbstractLearner):
@@ -17,13 +18,15 @@ class SquareCB(AbstractLearner):
         self.d = None
         self.k = None
 
+        self.oracle_class = getattr(OnlineRegressors, params["reg"])
         self.oracle = None
+        self.params_reg = params["params_reg"]
 
 
     def run(self, env : AbstractEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
-        self.oracle = SGDWrapper(self.d)
+        self.oracle = self.oracle_class(self.d, self.params_reg)
         self.learn_rate = 2
 
         for t in range(1, self.T + 1):
