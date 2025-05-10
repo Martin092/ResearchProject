@@ -23,18 +23,18 @@ class SquareCB(AbstractLearner):
     def run(self, env : AbstractEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
-        self.oracle = OnlineRidge(self.d)
+        self.oracle = SGDWrapper(self.d)
         self.learn_rate = 2
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
-            self.mu = len(self.action_set)
+            self.mu = self.k
             context = env.generate_context()
             a_index, action, pred_reward = self.select_action(context)
-            features = self.feature_map(action, context).reshape(1, -1)
+            features = self.feature_map(action, context)
 
             reward = env.reveal_reward(features)
-            self.oracle.update(features.reshape(-1, 1), pred_reward, reward)
+            self.oracle.update(features, pred_reward, -reward)
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
@@ -49,7 +49,7 @@ class SquareCB(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return action + context
+        return (action + context).reshape(-1, 1)
 
 
     def select_action(self, context):

@@ -52,9 +52,9 @@ class Visualizer:
 
         # Generate The graphs
         self._generate_reward_graph(data)
-        self._generate_arms_hist(df)
-        self._generate_reward_per_arm_graph(df)
-        # self._generate_regret_graphs(data)
+        # self._generate_arms_hist(df)
+        # self._generate_reward_per_arm_graph(df)
+        self._generate_regret_graphs(data)
 
     def _generate_arms_hist(self, df):
         names = df['Name'].to_list()

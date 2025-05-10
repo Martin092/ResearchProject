@@ -46,13 +46,12 @@ class ETCLearner(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action).reshape(-1, 1)
+        return np.array(action + context).reshape(-1, 1)
 
 
     def select_action(self, context):
         if self.t < self.N * self.k:
             return (self.t % self.k), self.action_set[self.t % self.k]
-
 
         if self.t == self.N * self.k:
             best_reward = -float('inf')

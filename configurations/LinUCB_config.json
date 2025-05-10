@@ -16,7 +16,7 @@
 
       "env_config" : {
         "d" : 5,
-        "sparsity": 1,
+        "sparsity": 0.4,
         "noise": 0.1,
         "k": 5
       },
@@ -36,7 +36,7 @@
 
       "env_config" : {
         "d" : 5,
-        "sparsity": 1,
+        "sparsity": 0.4,
         "noise": 0.1,
         "k": 5
       },

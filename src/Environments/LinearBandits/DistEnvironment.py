@@ -13,8 +13,10 @@ class NormalDistEnvironment(AbstractEnvironment):
         # Assuming that the bandit is k-armed
         self.k = params["k"]
 
-        # each action is a 2d array that holds the mean and variance of a 2d distribution that will be sampled
+        # each action is a 2d array that holds the mean and variance of the normal distribution that will be sampled
         self.action_set = (np.random.rand(self.k, 2))
+        self.action_set[:, 0] -= 0.5
+        self.action_set[:, 1] *= 2
         self.true_theta = self.generate_theta()
 
     def reveal_reward(self, feature):
@@ -23,7 +25,7 @@ class NormalDistEnvironment(AbstractEnvironment):
         return (self.true_theta.T @ feature + np.random.normal(loc=0.0, scale=self.noise))[0][0]
 
     def generate_context(self):
-        return np.random.rand(2)
+        return np.random.rand(self.d)
 
     def generate_theta(self):
         return sp.random(self.d, 1, density=self.sparsity)

@@ -8,40 +8,40 @@
     {
       "name" : "SquareCB",
 
-      "env" : "LinearEnvironmentSC",
+      "env" : "NormalDistEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 1,
+      "trials" : 10,
       "horizon" : 100,
 
       "env_config" : {
-        "d" : 5,
-        "high_theta_vals": 1,
-        "sigma" : 0.1,
-        "k" : 5
+        "d" : 200,
+        "sparsity":0.8,
+        "noise": 0.1,
+        "k": 10
       },
       "learner_config" : {
-        "learn_rate": 0.1,
-        "mu": 0.2
+        "learn_rate": 0.2
       }
     },
     {
-      "name" : "ETC with N=2",
+      "name" : "LinUCB",
 
-      "env" : "LinearEnvironmentSC",
-      "learner" : "ETCLearner",
+      "env" : "NormalDistEnvironment",
+      "learner" : "LinUCBLearner",
 
-      "trials" : 1,
+      "trials" : 10,
       "horizon" : 100,
 
       "env_config" : {
-        "d" : 5,
-        "high_theta_vals": 1,
-        "sigma" : 0.1,
-        "k" : 5
+        "d" : 200,
+        "sparsity": 0.8,
+        "noise": 0.1,
+        "k": 10
       },
       "learner_config" : {
-        "N": 4
+        "delta": 0.95,
+        "regularization": 0.1
       }
     }
   ]
