@@ -29,16 +29,16 @@ class LinUCBLearner(AbstractLearner):
 
         self.b = np.zeros(self.d).reshape(-1, 1)
         self.V = self.regularization * np.eye(self.d)
-        self.theta = np.zeros(self.d)
+        self.theta = np.zeros((self.d, 1))
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
             context = env.generate_context()
             action = self.select_action(context)
-            features = self.feature_map(action, context).reshape(1, -1)
+            features = self.feature_map(action, context)
 
             reward = env.reveal_reward(features)
-            self.update(features.reshape(-1, 1), reward)
+            self.update(features, reward)
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
@@ -53,7 +53,7 @@ class LinUCBLearner(AbstractLearner):
 
     def select_action(self, context):
         beta = np.sqrt(self.regularization)
-        beta += np.sqrt(2 * np.log(1/self.delta) + self.d * (np.log(1 + (self.t-1)/(self.regularization * self.d))))
+        beta += np.sqrt(2 * np.log(1/self.delta) + self.d * (np.log(1 + (self.t)/(self.regularization * self.d))))
 
         V_inv = np.linalg.inv(self.V)
         max_ucb = -float('inf')
@@ -85,4 +85,4 @@ class LinUCBLearner(AbstractLearner):
         return total
 
     def feature_map(self, action, context):
-        return np.array(action)
+        return np.array(action).reshape(-1, 1)

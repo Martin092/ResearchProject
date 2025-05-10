@@ -47,6 +47,4 @@ class LinearEnvironmentSC(AbstractEnvironment):
         self.regret.append(empirical_regret)
 
     def observe_actions(self):
-        # self.action_set = np.random.normal(0, 1, size=(self.k, self.d))
-        # self.action_set = np.ones((self.k, self.d))
         return self.action_set

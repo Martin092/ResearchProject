@@ -14,6 +14,8 @@ class SquareCB(AbstractLearner):
         super().__init__(T, params)
         self.learn_rate = None
         self.mu = None  # exploration parameter
+        self.d = None
+        self.k = None
 
         self.oracle = None
 
@@ -47,7 +49,7 @@ class SquareCB(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action)
+        return action + context
 
 
     def select_action(self, context):

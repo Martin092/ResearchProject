@@ -47,14 +47,14 @@ def satisfies_RIP(X, w, eps, k):
     return left <= mid <= right
 
 
-d = 100
-density = 0.05
+d = 1000
+density = 0.4
 noise = 0.05
 eps = 0.2
 k = int(density * d)
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
-n = 1000
+n = 100
 print(n)
 
 w_star = sp.random(d, 1, density=density)
@@ -67,8 +67,8 @@ print("t0 is ", t0)
 t0 = k
 params = {"sigma": noise,
           "k": k,
-          "k0": 80,
-          "t0": t0
+          "k0": int(0.8 * d),
+          "t0": 1
     }
 
 reg1 = AdaptiveRegressor(d, params)
@@ -110,6 +110,8 @@ plt.show()
 
 plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)
 plt.scatter(reals2, reg2.pred_history, label="Ridge", alpha=0.4)
+x = np.linspace(np.min(reals1), np.max(reals1), 100)
+plt.plot(x, x)
 plt.legend()
 plt.title("Predictions")
 plt.show()

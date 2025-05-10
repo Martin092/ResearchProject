@@ -1,7 +1,7 @@
 import numpy as np
 
 from ..AbstractLearner import AbstractLearner
-from src.Environments import LinearEnvironment
+from src.Environments import LinearEnvironment, AbstractEnvironment
 from sklearn.linear_model import SGDRegressor
 
 class ETCLearner(AbstractLearner):
@@ -18,7 +18,7 @@ class ETCLearner(AbstractLearner):
         self.best_index = 0
 
 
-    def run(self, env : LinearEnvironment, logger = None):
+    def run(self, env : AbstractEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
         self.regressor = SGDRegressor(penalty='l2', alpha=0.01)
@@ -27,10 +27,11 @@ class ETCLearner(AbstractLearner):
             self.action_set = env.observe_actions()
             context = env.generate_context()
             a_index, action = self.select_action(context)
-            features = self.feature_map(action, context).reshape(1, -1)
+            features = self.feature_map(action, context)
 
             reward = env.reveal_reward(features)
-            self.regressor.partial_fit(features, [reward])
+            # Change this line
+            self.regressor.partial_fit(features.reshape(1, -1), [reward])
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
@@ -45,7 +46,7 @@ class ETCLearner(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action)
+        return np.array(action).reshape(-1, 1)
 
 
     def select_action(self, context):
