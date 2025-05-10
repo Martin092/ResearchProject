@@ -1,4 +1,4 @@
-from src.Environments import SparseLinearEnvironment
+from src.Environments import AbstractEnvironment
 from src.Learners import AbstractLearner
 from sklearn.linear_model import SGDRegressor
 import numpy as np
@@ -25,56 +25,37 @@ class EGreedyLearner(AbstractLearner):
         assert 0 <= self.epsilon <= 1
 
         self.action_set = []
+        self.regressor = None
 
-        # Lasso regressor to compute estimated theta (parameter vector)
+    def run(self, env: AbstractEnvironment, logger = None):
         self.regressor = SGDRegressor(penalty="l1", alpha=0.01)
-
-        # Elastic net regressor
-        # By default, l1_ratio = 0.15, meaning l1=0.0015 and l2=0.0085
-        ## self.regressor = SGDRegressor(penalty="elasticnet", alpha=0.01)
-
-    def run(self, env: SparseLinearEnvironment, logger = None):
-
         for t in range(1, self.T + 1):
-
-            # Generate a new set of actions (feature vectors)
             self.action_set = env.observe_actions()
 
-            # Select an action (feature vector) through exploration or exploitation
-            context = env.generate_context() # why?
+            context = env.generate_context()
             action = self.select_action(context)
-            x = np.array(action).reshape(1, -1)
+            feature = self.feature_map(action, context)
 
-            # Compute the reward corresponding to the selected action (feature vector)
-            reward = env.reveal_reward(x)
-            y = np.array([reward])
+            reward = env.reveal_reward(feature)
 
-            # Update regressor
-            self.regressor.partial_fit(x, y)
-
-            # Append (action, reward) at round t to history
+            self.regressor.partial_fit(feature.reshape(1, -1), [reward])
             self.history.append((action, context, reward))
 
-            env.record_regret(reward, self.action_set)
+            env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
             if logger is not None:
                 logger.log(t, reward, env.regret[-1])
 
-    def select_action(self, context):
+    def feature_map(self, action, context):
+        return (action + context).reshape(-1, 1)
 
-        # If regressor hasn't been run yet, then the parameter 'coef_' doesn't exist.
+    def select_action(self, context):
         if not hasattr(self.regressor, 'coef_') or np.random.rand() < self.epsilon:
             i = np.random.randint(len(self.action_set))
             return self.action_set[i]
-
         else:
-            # Compute estimated rewards using estimated theta and feature vectors
             estimated_rewards = self.regressor.predict(self.action_set)
-            
-            # Select action index whose corresponding estimated reward is maximum. 
             best_reward_id = np.argmax(estimated_rewards)
-            
-            # Return feature vector corresponding to selected action. 
             return self.action_set[best_reward_id] 
     
     def total_reward(self):
@@ -84,10 +65,9 @@ class EGreedyLearner(AbstractLearner):
         return total
     
     def cum_reward(self):
-        cumulative = []
-        for (_, _, reward) in self.history:
-             cumulative.append[reward]
-        return cumulative
-
+        total = []
+        for (a, c, r) in self.history:
+            total.append(r)
+        return total
 
     

@@ -1,0 +1,56 @@
+{
+  "name" : "Simulation Example",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB k0=0.8d",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 200,
+        "sparsity":0.05,
+        "noise": 0.1,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 0.2,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.1,
+          "k": 10,
+          "k0": 180,
+          "t0": 1,
+          "C": 0.03,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "Epsilon-Greedy e=0.1",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "EGreedyLearner",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 200,
+        "sparsity":0.05,
+        "noise": 0.1,
+        "k": 10
+      },
+      "learner_config" : {
+        "epsilon": 0.1
+      }
+    }
+  ]
+}
