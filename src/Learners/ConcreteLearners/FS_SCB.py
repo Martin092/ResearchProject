@@ -11,18 +11,35 @@ class FSSquareCB(AbstractLearner):
         self.models = None
         self.oracles = []
         self.oracle_weights = None
-        self.l_rate = 1  # TODO make this not static
+        self.l_rate = params["l_rate"]
+        self.num_features = params["num_features"]
+        self.strategy = params["strategy"]
+        self.strat_params = params["strat_params"]
+        self.strat_map = {"random": self.random_model_generator,
+                          "all_subsets": self.all_subsets}
 
+    def all_subsets(self):
+        pass
 
     def random_model_generator(self):
-        pass
+        M = self.strat_params["M"]
+
+        indices = np.arange(self.d)
+        models = np.zeros((M, self.d), dtype=np.bool)
+        for i in range(M):
+            np.random.shuffle(indices)
+            models[i][indices[:self.num_features]] = True
+            assert np.sum(models[i]) == self.num_features
+
+        return models
+
 
     def setup(self, env : AbstractEnvironment):
         self.d = env.get_ambient_dim()
         self.k = env.k
-        self.models = np.ones((1, self.d), dtype=np.bool)
+        self.models = self.random_model_generator()
         for i in range(len(self.models)):
-            self.oracles.append(SGDRegressor(penalty="l1", alpha=1))
+            self.oracles.append(SGDRegressor(penalty="l1", alpha=self.l_rate))
         self.oracles = np.array(self.oracles)
         self.oracle_weights = np.ones(len(self.models))
         assert len(self.oracles) == len(self.models)
@@ -39,7 +56,6 @@ class FSSquareCB(AbstractLearner):
             features = self.feature_map(action, context)
 
             reward = env.reveal_reward(features)
-            # TODO update oracles
             self.update_oracles(a_index, context, reward)
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
@@ -55,6 +71,7 @@ class FSSquareCB(AbstractLearner):
 
 
     def select_action(self, context):
+        # TODO I dont think thats good
         if self.t == 0:
             return 0, self.feature_map(self.action_set[0], context), 0
 
@@ -63,14 +80,15 @@ class FSSquareCB(AbstractLearner):
             feat = self.feature_map(a, context)
             expert_rewards = np.zeros(len(self.models))
 
-            for i, M in enumerate(self.models):
+            for j, M in enumerate(self.models):
                 feat_subset = np.copy(feat)
                 feat_subset[~M] = 0
-                expert_rewards[i] = self.oracles[i].predict(feat_subset.reshape(1, -1))
+                expert_rewards[j] = self.oracles[j].predict(feat_subset.reshape(1, -1))[0]
 
             y = self.aggregate_rewards(expert_rewards)
             rewards[i] = y
 
+        # TODO check whether you are minimizing regret and not the other way around
         probabilities = np.zeros(len(self.action_set))
         a_max = np.argmax(rewards)
         for i, r in enumerate(rewards):
@@ -94,7 +112,7 @@ class FSSquareCB(AbstractLearner):
         r_max = beta + alpha
 
         # TODO this will be called for each action, maybe it removes too many models
-        good_models = np.where(r_min <= rewards <= r_max)
+        good_models = (r_min <= rewards) & (rewards <= r_max)
         self.models = self.models[good_models]
         self.oracle_weights = self.oracle_weights[good_models]
         self.oracles = self.oracles[good_models]
@@ -121,7 +139,8 @@ class FSSquareCB(AbstractLearner):
         return y_final
 
     def feature_map(self, action, context):
-        return (np.array(action).reshape(-1, 1) + context).reshape(-1, 1)
+        fmap = np.array(action).reshape(-1, 1) + context
+        return fmap.reshape(-1, 1) / np.linalg.norm(fmap)
 
     def total_reward(self):
         total = 0

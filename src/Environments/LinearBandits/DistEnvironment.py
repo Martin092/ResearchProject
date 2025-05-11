@@ -1,6 +1,7 @@
 from ..AbstractEnvironment import AbstractEnvironment
 import numpy as np
 import scipy.sparse as sp
+import scipy.sparse.linalg as linalg
 
 
 class NormalDistEnvironment(AbstractEnvironment):
@@ -28,7 +29,8 @@ class NormalDistEnvironment(AbstractEnvironment):
         return np.random.rand(self.d)
 
     def generate_theta(self):
-        return sp.random(self.d, 1, density=self.sparsity)
+        theta = sp.random(self.d, 1, density=self.sparsity)
+        return theta / np.linalg.norm(theta.toarray())
 
     def record_regret(self, reward, feature_set):
         assert self.true_theta.shape == (self.d, 1)
