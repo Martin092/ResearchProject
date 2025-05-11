@@ -12,7 +12,7 @@
       "learner" : "FSSquareCB",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
@@ -36,7 +36,7 @@
       "learner" : "SquareCB",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
@@ -59,7 +59,7 @@
       "learner" : "LinUCBLearner",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
@@ -79,7 +79,7 @@
       "learner" : "ETCLearner",
 
       "trials" : 20,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
@@ -98,7 +98,7 @@
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
@@ -117,7 +117,7 @@
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 200,

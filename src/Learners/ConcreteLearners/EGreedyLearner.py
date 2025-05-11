@@ -47,7 +47,7 @@ class EGreedyLearner(AbstractLearner):
                 logger.log(t, reward, env.regret[-1])
 
     def feature_map(self, action, context):
-        return (action + context).reshape(-1, 1)
+        return (action + context).reshape(-1, 1) / np.linalg.norm(action + context)
 
     def select_action(self, context):
         if not hasattr(self.regressor, 'coef_') or np.random.rand() < self.epsilon:

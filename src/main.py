@@ -16,7 +16,7 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations/all"
-    simulator = SettingsSimulator(settings_dir, "non_sparse.json")
+    simulator = SettingsSimulator(settings_dir, "sparse.json")
 
     simulator.simulate_all()
 

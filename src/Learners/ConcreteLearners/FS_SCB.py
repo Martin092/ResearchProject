@@ -100,6 +100,7 @@ class FSSquareCB(AbstractLearner):
         return index, self.action_set[index], rewards[index]
 
     def update_oracles(self, action_index, context, real_reward):
+        # TODO update weights
         feat = self.feature_map(self.action_set[action_index], context)
         for i, oracle in enumerate(self.oracles):
             feat_subset = np.copy(feat)
@@ -107,16 +108,25 @@ class FSSquareCB(AbstractLearner):
             oracle.partial_fit(feat_subset.reshape(1, -1), [real_reward])
 
 
-    def aggregate_rewards(self, rewards, beta=-1e10, alpha=2e10):
-        r_min = beta
-        r_max = beta + alpha
-
+    def aggregate_rewards(self, rewards):
+        delta = 0.05
+        G = 0
+        S = 0.1
+        L = 0.05
+        r_max = G + L * np.sqrt(self.d * np.log((1 + self.t * (L ** 2) / (self.l_rate * self.d)) / delta)) + L * S * np.sqrt(self.l_rate)
+        r_min = -r_max
+        print(r_max)
+        print(rewards)
         # TODO this will be called for each action, maybe it removes too many models
         good_models = (r_min <= rewards) & (rewards <= r_max)
+        if np.sum(good_models) != len(self.models):
+            print("Removed ", len(self.models) - np.sum(good_models))
+            print()
+
         self.models = self.models[good_models]
         self.oracle_weights = self.oracle_weights[good_models]
         self.oracles = self.oracles[good_models]
-        rewards = (rewards[good_models] - beta) / alpha
+        rewards = (rewards[good_models] - r_max) / (r_max - r_min)
 
         w_sum = np.sum(self.oracle_weights)
         vs = self.oracle_weights / w_sum
