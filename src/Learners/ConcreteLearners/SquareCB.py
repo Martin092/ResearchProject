@@ -16,6 +16,7 @@ class SquareCB(AbstractLearner):
         self.learn_rate = None
         self.mu = None  # exploration parameter
         self.d = None
+        # TODO make sure this k is not the same as the sparsity k
         self.k = None
 
         self.oracle_class = getattr(OnlineRegressors, params["reg"])
@@ -27,7 +28,7 @@ class SquareCB(AbstractLearner):
         self.d = env.get_ambient_dim()
         self.k = env.k
         self.oracle = self.oracle_class(self.d, self.params_reg)
-        self.learn_rate = 2
+        self.learn_rate = 2 # TODO make not fixed
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
@@ -37,7 +38,7 @@ class SquareCB(AbstractLearner):
             features = self.feature_map(action, context)
 
             reward = env.reveal_reward(features)
-            self.oracle.update(features, pred_reward, -reward)
+            self.oracle.update(features, pred_reward, reward)
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
@@ -61,11 +62,12 @@ class SquareCB(AbstractLearner):
             feat = self.feature_map(a, context)
             rewards[i] = self.oracle.predict(feat)
 
-        bt = np.argmin(rewards)
+        # TODO make sure to translate the loss to regret correctly
+        bt = np.argmax(rewards)
         probabilities = np.zeros(len(self.action_set))
         for i, r in enumerate(rewards):
             if i != bt:
-                probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[i] - rewards[bt]))
+                probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[bt] - rewards[i]))
         probabilities[bt] = 1 - np.sum(probabilities)
         # print(probabilities)
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
