@@ -10,6 +10,7 @@ class FSSquareCB(AbstractLearner):
         self.d = None
         self.models = None
         self.oracles = []
+        self.oracle_weights = None
         self.l_rate = 1  # TODO make this not static
 
 
@@ -22,6 +23,7 @@ class FSSquareCB(AbstractLearner):
         self.models = np.ones((1, self.d), dtype=np.bool)
         for i in range(len(self.models)):
             self.oracles.append(SGDRegressor(penalty="l1", alpha=1))
+        self.oracles = np.array(self.oracles)
         self.oracle_weights = np.ones(len(self.models))
         assert len(self.oracles) == len(self.models)
         assert len(self.oracle_weights) == len(self.models)
@@ -32,7 +34,7 @@ class FSSquareCB(AbstractLearner):
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
 
-            context = env.generate_context()
+            context = env.generate_context().reshape(-1, 1)
             a_index, action, pred_reward = self.select_action(context)
             features = self.feature_map(action, context)
 
@@ -64,7 +66,7 @@ class FSSquareCB(AbstractLearner):
             for i, M in enumerate(self.models):
                 feat_subset = np.copy(feat)
                 feat_subset[~M] = 0
-                expert_rewards[i] = self.oracles[i].predict([feat_subset])
+                expert_rewards[i] = self.oracles[i].predict(feat_subset.reshape(1, -1))
 
             y = self.aggregate_rewards(expert_rewards)
             rewards[i] = y
@@ -81,13 +83,13 @@ class FSSquareCB(AbstractLearner):
 
     def update_oracles(self, action_index, context, real_reward):
         feat = self.feature_map(self.action_set[action_index], context)
-        for i, oracle in self.oracles:
+        for i, oracle in enumerate(self.oracles):
             feat_subset = np.copy(feat)
             feat_subset[~self.models[i]] = 0
-            oracle.partial_fit(feat_subset.reshape(1, -1), real_reward)
+            oracle.partial_fit(feat_subset.reshape(1, -1), [real_reward])
 
 
-    def aggregate_rewards(self, rewards, beta=-1, alpha=2):
+    def aggregate_rewards(self, rewards, beta=-1e10, alpha=2e10):
         r_min = beta
         r_max = beta + alpha
 
@@ -95,6 +97,7 @@ class FSSquareCB(AbstractLearner):
         good_models = np.where(r_min <= rewards <= r_max)
         self.models = self.models[good_models]
         self.oracle_weights = self.oracle_weights[good_models]
+        self.oracles = self.oracles[good_models]
         rewards = (rewards[good_models] - beta) / alpha
 
         w_sum = np.sum(self.oracle_weights)
@@ -113,12 +116,12 @@ class FSSquareCB(AbstractLearner):
         pred_min = 1 - np.sqrt(delta1)
         pred_max = np.sqrt(delta0)
 
-        y_final = np.random.uniform(pred_min, pred_max)
-        assert pred_min <= y_final <= pred_max
+        y_final = (pred_max + pred_min) / 2.0
+        assert pred_min - 1e-6 <= y_final <= pred_max + 1e-6
         return y_final
 
     def feature_map(self, action, context):
-        return (np.array(action) + context).reshape(-1, 1)
+        return (np.array(action).reshape(-1, 1) + context).reshape(-1, 1)
 
     def total_reward(self):
         total = 0
