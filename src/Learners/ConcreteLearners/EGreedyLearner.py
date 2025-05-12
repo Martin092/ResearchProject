@@ -54,9 +54,10 @@ class EGreedyLearner(AbstractLearner):
             i = np.random.randint(len(self.action_set))
             return self.action_set[i]
         else:
-            estimated_rewards = self.regressor.predict(self.action_set)
+            features = [self.feature_map(a, context) for a in self.action_set]
+            estimated_rewards = self.regressor.predict(np.array(features).reshape(len(features), -1))
             best_reward_id = np.argmax(estimated_rewards)
-            return self.action_set[best_reward_id] 
+            return self.action_set[best_reward_id]
     
     def total_reward(self):
         total = 0
