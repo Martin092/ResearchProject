@@ -31,13 +31,13 @@
       }
     },
     {
-      "name" : "SquareCB k0=0.8d",
+      "name" : "SquareCB",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 200,
@@ -47,14 +47,9 @@
       },
       "learner_config" : {
         "learn_rate": 0.2,
-        "reg": "AdaptiveRegressor",
+        "reg": "RidgeFSSCB",
         "params_reg": {
-          "sigma": 0.1,
-          "k": 10,
-          "k0": 110,
-          "t0": 1,
-          "C": 0.03,
-          "delta": 0.05
+          "lambda_reg": 3
         }
       }
     },
@@ -65,7 +60,7 @@
       "learner" : "LinUCBLearner",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 200,
@@ -85,7 +80,7 @@
       "learner" : "ETCLearner",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 200,
@@ -104,7 +99,7 @@
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 200,
@@ -123,7 +118,7 @@
       "learner" : "EGreedyLearner",
 
       "trials" : 20,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 200,

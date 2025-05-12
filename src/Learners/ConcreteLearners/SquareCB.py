@@ -14,7 +14,7 @@ class SquareCB(AbstractLearner):
     def __init__(self, T : int, params : dict):
         super().__init__(T, params)
         self.learn_rate = params["learn_rate"]
-        self.mu = None  # exploration parameter
+        self.mu = None
         self.d = None
         # TODO make sure this k is not the same as the sparsity k
         self.k = None
@@ -23,12 +23,14 @@ class SquareCB(AbstractLearner):
         self.oracle = None
         self.params_reg = params["params_reg"]
 
+        self.alpha = params.get("alpha", 1.0)
+
 
     def run(self, env : AbstractEnvironment, logger = None):
         self.d = env.get_ambient_dim()
         self.k = env.k
         self.oracle = self.oracle_class(self.d, self.params_reg)
-        self.mu = self.k
+        self.mu = self.k 
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
@@ -42,7 +44,6 @@ class SquareCB(AbstractLearner):
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
-            # Log the actions
             if logger is not None:
                 logger.log_full(t, context, a_index, action, reward, env.regret[-1])
 
@@ -58,19 +59,31 @@ class SquareCB(AbstractLearner):
 
     def select_action(self, context):
         rewards = np.zeros(len(self.action_set))
+
         for i, a in enumerate(self.action_set):
             feat = self.feature_map(a, context)
             rewards[i] = self.oracle.predict(feat)
 
-        # TODO make sure to translate the loss to regret correctly
-        bt = np.argmax(rewards)
+        best_action_idx = np.argmax(rewards)
+        best_reward = rewards[best_action_idx]
+
         probabilities = np.zeros(len(self.action_set))
-        for i, r in enumerate(rewards):
-            if i != bt:
-                probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[i] - rewards[bt]))
-        probabilities[bt] = 1 - np.sum(probabilities)
-        # print(probabilities)
-        index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
+        gaps = best_reward - rewards
+
+        for i in range(len(self.action_set)):
+            if i != best_action_idx:
+                gap = max(0, gaps[i])
+                probabilities[i] = 1.0 / (self.mu + self.learn_rate * gap)
+
+        if np.sum(probabilities) > 0:
+            probabilities = (probabilities / np.sum(probabilities)) * self.alpha * (((self.T - self.t) / self.T) ** self.t)
+
+        probabilities[best_action_idx] = 1.0 - np.sum(probabilities)
+
+        probabilities = np.clip(probabilities, 0, 1000)
+        probabilities = probabilities / np.sum(probabilities)
+
+        index = np.random.choice(np.arange(len(self.action_set)), p=probabilities)
         return index, self.action_set[index], rewards[index]
 
 

@@ -8,17 +8,17 @@
     {
       "name" : "SquareCB",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.8,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 10
+        "k": 100
       },
       "learner_config" : {
         "learn_rate": 0.2,
@@ -31,17 +31,17 @@
     {
       "name" : "Epsilon-Greedy e=0.1",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.8,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 10
+        "k": 100
       },
       "learner_config" : {
         "epsilon": 0.1
