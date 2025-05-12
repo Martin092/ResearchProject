@@ -67,7 +67,7 @@ class SquareCB(AbstractLearner):
         probabilities = np.zeros(len(self.action_set))
         for i, r in enumerate(rewards):
             if i != bt:
-                probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[bt] - rewards[i]))
+                probabilities[i] = 1 / (self.mu + self.learn_rate * (rewards[i] - rewards[bt]))
         probabilities[bt] = 1 - np.sum(probabilities)
         # print(probabilities)
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
