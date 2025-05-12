@@ -13,7 +13,7 @@ from src import OnlineRegressors
 class SquareCB(AbstractLearner):
     def __init__(self, T : int, params : dict):
         super().__init__(T, params)
-        self.learn_rate = None
+        self.learn_rate = params["learn_rate"]
         self.mu = None  # exploration parameter
         self.d = None
         # TODO make sure this k is not the same as the sparsity k
@@ -28,11 +28,11 @@ class SquareCB(AbstractLearner):
         self.d = env.get_ambient_dim()
         self.k = env.k
         self.oracle = self.oracle_class(self.d, self.params_reg)
-        self.learn_rate = 2 # TODO make not fixed
+        self.mu = self.k
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
-            self.mu = self.k
+
             context = env.generate_context()
             a_index, action, pred_reward = self.select_action(context)
             features = self.feature_map(action, context)

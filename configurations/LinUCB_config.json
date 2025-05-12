@@ -12,13 +12,13 @@
       "learner" : "LinUCBLearner",
 
       "trials" : 20,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 5,
-        "sparsity": 0.4,
+        "sparsity": 1,
         "noise": 0.1,
-        "k": 5
+        "k": 20
       },
       "learner_config" : {
         "delta": 0.95,
@@ -26,22 +26,60 @@
       }
     },
     {
-      "name" : "ETC",
+      "name" : "ETC 1",
 
       "env" : "NormalDistEnvironment",
       "learner" : "ETCLearner",
 
       "trials" : 20,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
         "d" : 5,
-        "sparsity": 0.4,
+        "sparsity": 1,
         "noise": 0.1,
-        "k": 5
+        "k": 20
       },
       "learner_config" : {
-        "N": 2
+        "N": 1
+      }
+    },
+    {
+      "name" : "ETC 4",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 20,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 5,
+        "sparsity": 1,
+        "noise": 0.1,
+        "k": 20
+      },
+      "learner_config" : {
+        "N": 4
+      }
+    },
+    {
+      "name" : "ETC 8",
+
+      "env" : "NormalDistEnvironment",
+      "learner" : "ETCLearner",
+
+      "trials" : 20,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 5,
+        "sparsity": 1,
+        "noise": 0.1,
+        "k": 20
+      },
+      "learner_config" : {
+        "N": 8
       }
     }
   ]

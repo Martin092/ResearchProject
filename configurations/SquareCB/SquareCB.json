@@ -17,35 +17,34 @@
       "env_config" : {
         "d" : 200,
         "sparsity":0.8,
-        "noise": 0.1,
+        "noise": 0.01,
         "k": 10
       },
       "learner_config" : {
         "learn_rate": 0.2,
-        "reg": "OnlineRidge",
+        "reg": "RidgeFSSCB",
         "params_reg": {
-          "lambda_reg": 0.1
+          "lambda_reg": 3
         }
       }
     },
     {
-      "name" : "LinUCB",
+      "name" : "Epsilon-Greedy e=0.1",
 
       "env" : "NormalDistEnvironment",
-      "learner" : "LinUCBLearner",
+      "learner" : "EGreedyLearner",
 
       "trials" : 10,
       "horizon" : 100,
 
       "env_config" : {
         "d" : 200,
-        "sparsity": 0.8,
-        "noise": 0.1,
+        "sparsity":0.8,
+        "noise": 0.01,
         "k": 10
       },
       "learner_config" : {
-        "delta": 0.95,
-        "regularization": 0.1
+        "epsilon": 0.1
       }
     }
   ]
