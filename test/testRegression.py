@@ -7,6 +7,7 @@ import scipy.sparse as sp
 from src.OnlineRegressors.AbstractRegressor import Regressor
 from src.OnlineRegressors.ConcreteRegressors.LinearRegression import LinearRegression
 from src.OnlineRegressors.ConcreteRegressors.RidgeRegression import OnlineRidge
+from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
 from src.OnlineRegressors.ConcreteRegressors.AdaptiveRegression import AdaptiveRegressor
 from src.OnlineRegressors.ConcreteRegressors.SGDWrapper import SGDWrapper
 matplotlib.use("tkagg")
@@ -32,7 +33,7 @@ def test_adaptive(Xt, reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star
     mse = np.mean((reg.pred_history - reals) ** 2)
     print()
     print(f"Final MSE: {mse}")
-    print(f"Weight Error: {np.linalg.norm(reg.w - w_star)}")
+    # print(f"Weight Error: {np.linalg.norm(reg.w - w_star)}")
 
     # plt.plot(np.abs(reg.pred_history - reg.real_history))
     # plt.show()
@@ -71,17 +72,18 @@ params = {"sigma": noise,
           "t0": 1
     }
 
-reg1 = AdaptiveRegressor(d, params)
-reg2 = OnlineRidge(d)
+# reg1 = AdaptiveRegressor(d, params)
+params_r = {"lambda_reg": 0.2}
+reg2 = RidgeFSSCB(d, params_r)
 
-res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
+# res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
 res2, t2, reals2 = test_adaptive(Xt, reg2, d, density, noise, n, w_star=w_star)
 
-print(f"Adaptive runtime: {t1}")
+# print(f"Adaptive runtime: {t1}")
 print(f"Ridge runtime: {t2}")
 
 
-plt.plot(res1, label="POSLR")
+# plt.plot(res1, label="POSLR")
 plt.plot(res2, label="Ridge")
 plt.legend()
 plt.xlabel("Rounds")
@@ -98,7 +100,7 @@ plt.show()
 # plt.show()
 
 
-plt.plot(reg1.regret(w_star, reals=reals1), label="POSLR")
+# plt.plot(reg1.regret(w_star, reals=reals1), label="POSLR")
 plt.plot(reg2.regret(w_star), label="Ridge")
 plt.legend()
 plt.xlabel("Rounds")
@@ -108,10 +110,10 @@ plt.show()
 
 
 
-plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)
+# plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)
 plt.scatter(reals2, reg2.pred_history, label="Ridge", alpha=0.4)
-x = np.linspace(np.min(reals1), np.max(reals1), 100)
-plt.plot(x, x)
+# x = np.linspace(np.min(reals1), np.max(reals1), 100)
+# plt.plot(x, x)
 plt.legend()
 plt.title("Predictions")
 plt.show()

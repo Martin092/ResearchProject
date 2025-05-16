@@ -6,13 +6,13 @@
 
   "simulations" : [
     {
-      "name" : "SquareCB",
+      "name" : "FS-SCB - 50 models",
 
       "env" : "SquareCBEnvironment",
-      "learner" : "SquareCB",
+      "learner" : "FSSquareCB",
 
       "trials" : 10,
-      "horizon" : 500,
+      "horizon" : 100,
 
       "env_config" : {
         "d" : 100,
@@ -21,10 +21,11 @@
         "k": 100
       },
       "learner_config" : {
-        "learn_rate": 500,
-        "reg": "RidgeFSSCB",
-        "params_reg": {
-          "lambda_reg": 0.6
+        "l_rate": 1.8,
+        "strategy": "random",
+        "strat_params": {
+          "M": 50,
+          "num_features": 100
         }
       }
     }

@@ -6,24 +6,23 @@
 
     "simulations" : [
         {
-            "name" : "Egreedy 0.1-epsilon 0.1-sparsity",
+          "name" : "Epsilon-Greedy e=0.1",
 
-            "env" : "SparseLinearEnvironment",
-            "learner" : "EGreedyLearner",
+          "env" : "NormalDistEnvironment",
+          "learner" : "EGreedyLearner",
 
-            "trials" : 20,
-            "horizon" : 30,
+          "trials" : 10,
+          "horizon" : 500,
 
-            "env_config" : {
-                "d" : 100,
-                "actions" : 20,
-                "sigma" : 0.1,
-                "sparsity" : 0.1,
-                "k" : 12
-            },
-            "learner_config" : {
-                "epsilon": 0.1
-            }
+          "env_config" : {
+            "d" : 5,
+            "sparsity": 1,
+            "noise": 0.01,
+            "k": 5
+          },
+          "learner_config" : {
+            "epsilon": 0.05
+          }
         }
     ]
 }

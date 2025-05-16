@@ -8,7 +8,7 @@
     {
       "name" : "SquareCB k0=0.8d",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "CDistEnv",
       "learner" : "SquareCB",
 
       "trials" : 10,
@@ -18,7 +18,9 @@
         "d" : 200,
         "sparsity":0.05,
         "noise": 0.1,
-        "k": 10
+        "k": 10,
+        "action_highest_mean": 5,
+        "action_highest_var": 3
       },
       "learner_config" : {
         "learn_rate": 0.2,
@@ -36,7 +38,7 @@
     {
       "name" : "Epsilon-Greedy e=0.1",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "CDistEnv",
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
@@ -46,7 +48,9 @@
         "d" : 200,
         "sparsity":0.05,
         "noise": 0.1,
-        "k": 10
+        "k": 10,
+        "action_highest_mean": 5,
+        "action_highest_var": 3
       },
       "learner_config" : {
         "epsilon": 0.1

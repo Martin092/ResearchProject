@@ -34,4 +34,4 @@ class AbstractEnvironment(ABC):
         return self.d
 
     def get_cumulative_regret(self):
-        return self.regret
+        return self.cum_regret

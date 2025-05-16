@@ -4,7 +4,7 @@ import scipy.sparse as sp
 import scipy.sparse.linalg as linalg
 
 
-class NormalDistEnvironment(AbstractEnvironment):
+class DistEnvFixedActions(AbstractEnvironment):
     def __init__(self, params):
         super().__init__(params)
 
@@ -33,6 +33,7 @@ class NormalDistEnvironment(AbstractEnvironment):
 
     def generate_theta(self):
         theta = sp.random(self.d, 1, density=self.sparsity)
+        print(theta)
         return theta / np.linalg.norm(theta.toarray())
 
     def record_regret(self, reward, feature_set):
@@ -50,5 +51,5 @@ class NormalDistEnvironment(AbstractEnvironment):
     def observe_actions(self):
         actions = np.zeros((self.k, self.d))
         for i in range(self.k):
-            actions[i] = np.random.normal(self.action_set[i][0], self.action_set[i][1]) + np.zeros(self.d)
+            actions[i] = np.random.normal(self.action_set[i][0], self.action_set[i][1], size=(self.d))
         return actions

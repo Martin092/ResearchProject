@@ -16,7 +16,7 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations/SquareCB"
-    simulator = SettingsSimulator(settings_dir, "vsEpsilonGreedy_sparse.json")
+    simulator = SettingsSimulator(settings_dir, "SquareCB_Reg.json")
 
     simulator.simulate_all()
 

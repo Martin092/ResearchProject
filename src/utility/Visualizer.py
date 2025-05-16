@@ -109,7 +109,7 @@ class Visualizer:
             std_reward = data.loc[data['Name'] == name,'std_cum_reward'].to_numpy()
 
             plt.plot(time, reward, label=f"{name}")
-            plt.fill_between(time, reward - std_reward, reward + std_reward, alpha=0.3)
+            plt.fill_between(time, reward - std_reward, reward + std_reward, alpha=0.1)
 
         plt.xlabel('Round t')
         plt.ylabel('Cumulative Reward')
@@ -132,7 +132,7 @@ class Visualizer:
             std_cum_regret = data.loc[data['Name'] == name,'std_cum_regret'].to_numpy()
 
             plt.plot(time, cum_regret, label=f"{name}")
-            plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.3)
+            plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.1)
 
 
         plt.xlabel('Round t')
@@ -153,7 +153,7 @@ class Visualizer:
             std_simp_regret = data.loc[data['Name'] == name,'std_cum_min_regret'].to_numpy()
 
             plt.plot(time, simp_regret, label=f"{name}")
-            plt.fill_between(time, simp_regret - std_simp_regret, simp_regret + std_simp_regret, alpha=0.3)
+            plt.fill_between(time, simp_regret - std_simp_regret, simp_regret + std_simp_regret, alpha=0.1)
 
         plt.xlabel('Round t')
         plt.ylabel('Simple Regret')
@@ -173,7 +173,7 @@ class Visualizer:
             std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
 
             plt.plot(time, avg_regret, label=f"{name}")
-            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.3)
+            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
 
         plt.xlabel('Round t')
         plt.ylabel('Average Regret')

@@ -46,7 +46,7 @@ class ETCLearner(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return np.array(action + context).reshape(-1, 1)
+        return (action).reshape(-1, 1)
 
 
     def select_action(self, context):
