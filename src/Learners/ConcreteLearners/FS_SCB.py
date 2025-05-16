@@ -102,13 +102,22 @@ class FSSquareCB(AbstractLearner):
             y = self.aggregate_rewards(expert_rewards)
             rewards[i] = y
 
-        # TODO check whether you are minimizing regret and not the other way around
+        best_action_idx = np.argmax(rewards)
+        best_reward = rewards[best_action_idx]
+        gaps = rewards - best_reward
+
         probabilities = np.zeros(len(self.action_set))
-        a_max = np.argmax(rewards)
-        for i, r in enumerate(rewards):
-            if i == a_max: continue
-            probabilities[i] = 1/ (self.k + self.alpha * (r - rewards[a_max]))
-        probabilities[a_max] = 1 - np.sum(probabilities)
+
+        for i in range(len(self.action_set)):
+            if i != best_action_idx:
+                # gap = max(0, gaps[i])
+                probabilities[i] = 1.0 / (self.k + self.alpha * gaps[i])
+
+        if np.sum(probabilities) > 0:
+            probabilities = probabilities / np.sum(probabilities)
+
+        probabilities[best_action_idx] = 1.0 - np.sum(probabilities)
+
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
         return index, self.action_set[index], rewards[index]
 
@@ -171,8 +180,7 @@ class FSSquareCB(AbstractLearner):
         return y_final * (r_max - r_min) + r_min
 
     def feature_map(self, action, context):
-        fmap = np.array(action).reshape(-1, 1) + context
-        return fmap.reshape(-1, 1) / np.linalg.norm(fmap)
+        return (action).reshape(-1, 1)
 
     def total_reward(self):
         total = 0

@@ -92,10 +92,13 @@ class SquareCB(AbstractLearner):
         if np.sum(probabilities) > 0:
             probabilities = probabilities / np.sum(probabilities)
 
+        print(np.sum(probabilities))
+        # print(probabilities)
         probabilities[best_action_idx] = 1.0 - np.sum(probabilities)
 
         probabilities = np.clip(probabilities, 0, 1)
         probabilities = probabilities / np.sum(probabilities)
+
 
         # if self.t % 100 == 0:
         #     print(probabilities)

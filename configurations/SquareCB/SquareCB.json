@@ -12,7 +12,7 @@
       "learner" : "SquareCB",
 
       "trials" : 10,
-      "horizon" : 1000,
+      "horizon" : 500,
 
       "env_config" : {
         "d" : 100,
@@ -26,49 +26,6 @@
         "params_reg": {
           "lambda_reg": 0.6
         }
-      }
-    },
-    {
-      "name" : "SquareCB with annealing",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "SquareCB",
-
-      "trials" : 10,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity":0.1,
-        "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "learn_rate": 500,
-        "reg": "RidgeFSSCB",
-        "annealing": true,
-        "params_reg": {
-          "lambda_reg": 0.6
-        }
-      }
-    },
-    {
-      "name" : "Epsilon-Greedy e=0.1",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "EGreedyLearner",
-
-      "trials" : 10,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity":0.1,
-        "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "epsilon": 0.1
       }
     }
   ]

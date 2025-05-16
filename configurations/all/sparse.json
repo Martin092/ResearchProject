@@ -6,31 +6,6 @@
 
   "simulations" : [
     {
-      "name" : "FS-SCB - 50 models",
-
-      "env" : "NormalDistEnvironment",
-      "learner" : "FSSquareCB",
-
-      "trials" : 10,
-      "horizon" : 100,
-
-      "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
-        "noise": 0.01,
-        "k": 20
-      },
-      "learner_config" : {
-        "l_rate": 1.6,
-        "strategy": "random",
-        "num_features": 180,
-        "alpha": 0.05,
-        "strat_params": {
-          "M": 20
-        }
-      }
-    },
-    {
       "name" : "SquareCB",
 
       "env" : "SquareCBEnvironment",
@@ -40,33 +15,33 @@
       "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 20
+        "k": 100
       },
       "learner_config" : {
-        "learn_rate": 0.2,
+        "learn_rate": 500,
         "reg": "RidgeFSSCB",
         "params_reg": {
-          "lambda_reg": 3
+          "lambda_reg": 0.6
         }
       }
     },
     {
       "name" : "LinUCB",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "LinUCBLearner",
 
       "trials" : 10,
       "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 20
+        "k": 100
       },
       "learner_config" : {
         "delta": 0.95,
@@ -76,17 +51,17 @@
     {
       "name" : "ETC with N=2",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "ETCLearner",
 
       "trials" : 10,
       "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 20
+        "k": 100
       },
       "learner_config" : {
         "N": 2
@@ -95,17 +70,17 @@
     {
       "name" : "Epsilon-Greedy e=0.1",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "EGreedyLearner",
 
       "trials" : 10,
       "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 20
+        "k": 100
       },
       "learner_config" : {
         "epsilon": 0.1
@@ -114,17 +89,17 @@
     {
       "name" : "Random",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "EGreedyLearner",
 
-      "trials" : 20,
+      "trials" : 10,
       "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
+        "d" : 100,
+        "sparsity":0.1,
         "noise": 0.01,
-        "k": 20
+        "k": 100
       },
       "learner_config" : {
         "epsilon": 1

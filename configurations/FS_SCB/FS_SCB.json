@@ -8,17 +8,17 @@
     {
       "name" : "FS-SCB - 50 models",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
 
       "trials" : 10,
       "horizon" : 100,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.3,
-        "noise": 0.1,
-        "k": 10
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
       },
       "learner_config" : {
         "l_rate": 1.8,
@@ -27,50 +27,6 @@
           "M": 50,
           "num_features": 100
         }
-      }
-    },
-    {
-      "name" : "FS-SCB - 20 models",
-
-      "env" : "NormalDistEnvironment",
-      "learner" : "FSSquareCB",
-
-      "trials" : 10,
-      "horizon" : 100,
-
-      "env_config" : {
-        "d" : 200,
-        "sparsity":0.3,
-        "noise": 0.1,
-        "k": 10
-      },
-      "learner_config" : {
-        "l_rate": 1.8,
-        "strategy": "random",
-        "num_features": 100,
-        "strat_params": {
-          "M": 20
-        }
-      }
-    },
-    {
-      "name" : "LinUCB",
-
-      "env" : "NormalDistEnvironment",
-      "learner" : "LinUCBLearner",
-
-      "trials" : 10,
-      "horizon" : 100,
-
-      "env_config" : {
-        "d" : 200,
-        "sparsity":0.3,
-        "noise": 0.1,
-        "k": 10
-      },
-      "learner_config" : {
-        "delta": 0.95,
-        "regularization": 0.1
       }
     }
   ]

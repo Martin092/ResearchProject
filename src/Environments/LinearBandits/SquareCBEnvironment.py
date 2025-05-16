@@ -34,8 +34,6 @@ class SquareCBEnvironment(AbstractEnvironment):
         return reward
 
     def generate_context(self):
-        context = np.random.normal(0, 1, size=self.d)
-        # return context / np.linalg.norm(context)
         return 0
 
     def generate_theta(self):
@@ -47,13 +45,6 @@ class SquareCBEnvironment(AbstractEnvironment):
 
 
     def record_regret(self, reward, feature_set):
-        """
-        Record regret by comparing the received reward to the best possible reward
-        
-        Args:
-            reward: The reward received for the chosen action
-            feature_set: List of feature vectors for all possible actions
-        """
         best_reward = -float('inf')
         
         for feature in feature_set:
