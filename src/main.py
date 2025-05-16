@@ -15,8 +15,8 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/SquareCB"
-    simulator = SettingsSimulator(settings_dir, "SquareCB_Reg.json")
+    settings_dir = "../configurations/FS_SCB"
+    simulator = SettingsSimulator(settings_dir, "diff_model_rand.json")
 
     simulator.simulate_all()
 

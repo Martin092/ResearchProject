@@ -1,0 +1,84 @@
+{
+  "name" : "Simulation Example",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "FS-SCB - 50 models",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 100,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 50
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB - 10 models",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 100,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB - 30 models",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 100,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 30
+        }
+      }
+    }
+  ]
+}

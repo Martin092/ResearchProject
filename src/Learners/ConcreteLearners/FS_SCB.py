@@ -21,7 +21,7 @@ class FSSquareCB(AbstractLearner):
         self.strat_params = params["strat_params"]
         self.strat_map = {"random": self.random_model_generator,
                           "all_subsets": self.all_subsets}
-        self.alpha = params["alpha"]
+        self.learn_rate = params["learn_rate"]
 
     def all_subsets(self):
         k = self.num_features
@@ -65,7 +65,7 @@ class FSSquareCB(AbstractLearner):
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
 
-            context = env.generate_context().reshape(-1, 1)
+            context = env.generate_context()
             a_index, action, pred_reward = self.select_action(context)
             features = self.feature_map(action, context)
 
@@ -110,13 +110,15 @@ class FSSquareCB(AbstractLearner):
 
         for i in range(len(self.action_set)):
             if i != best_action_idx:
-                # gap = max(0, gaps[i])
-                probabilities[i] = 1.0 / (self.k + self.alpha * gaps[i])
+                probabilities[i] = 1.0 / (self.k + self.learn_rate * gaps[i])
 
         if np.sum(probabilities) > 0:
             probabilities = probabilities / np.sum(probabilities)
 
         probabilities[best_action_idx] = 1.0 - np.sum(probabilities)
+
+        probabilities = np.clip(probabilities, 0, 1)
+        probabilities = probabilities / np.sum(probabilities)
 
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
         return index, self.action_set[index], rewards[index]
