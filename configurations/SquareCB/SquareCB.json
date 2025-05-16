@@ -21,10 +21,34 @@
         "k": 100
       },
       "learner_config" : {
-        "learn_rate": 0.2,
+        "learn_rate": 500,
         "reg": "RidgeFSSCB",
         "params_reg": {
-          "lambda_reg": 3
+          "lambda_reg": 0.6
+        }
+      }
+    },
+    {
+      "name" : "SquareCB with annealing",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 500,
+        "reg": "RidgeFSSCB",
+        "annealing": true,
+        "params_reg": {
+          "lambda_reg": 0.6
         }
       }
     },

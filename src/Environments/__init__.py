@@ -4,6 +4,7 @@ from .LinearBandits.LinearEnvironment import LinearEnvironment
 from .LinearBandits.LinearEnvironmentSC import LinearEnvironmentSC
 from .LinearBandits.SparseLinearEnvironment import SparseLinearEnvironment
 from .LinearBandits.SquareCBEnvironment import SquareCBEnvironment
+from .LinearBandits.CDistEnv import CDistEnv
 
 
 __all__ = ["AbstractEnvironment",
@@ -11,5 +12,6 @@ __all__ = ["AbstractEnvironment",
            "SparseLinearEnvironment",
            "LinearEnvironmentSC",
            "NormalDistEnvironment",
-           "SquareCBEnvironment"]
+           "SquareCBEnvironment",
+           "CDistEnv"]
 
