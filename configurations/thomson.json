@@ -1,0 +1,48 @@
+{
+  "name" : "LinUCB against ETC",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "ThomsonSampling",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "ThomsonSampling",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 5,
+        "sparsity": 1,
+        "noise": 0.01,
+        "k": 20
+      },
+      "learner_config" : {
+        "regularization": 0.5
+      }
+    },
+    {
+      "name" : "LinUCB",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 10,
+      "horizon" : 100,
+
+      "env_config" : {
+        "d" : 5,
+        "sparsity": 1,
+        "noise": 0.01,
+        "k": 20
+      },
+      "learner_config" : {
+        "regularization": 0.5,
+        "delta": 0.05
+      }
+    }
+  ]
+}

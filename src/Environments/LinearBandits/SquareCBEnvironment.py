@@ -62,7 +62,7 @@ class SquareCBEnvironment(AbstractEnvironment):
         self.regret.append(instantaneous_regret)
 
     def observe_actions(self):
-        actions = np.random.multivariate_normal(self.means, np.eye(self.k) * self.vars, size=self.d)
+        actions = np.random.multivariate_normal(self.means, np.eye(self.k) * self.vars, size=self.d).reshape(self.k, self.d)
 
         for i in range(self.k):
             if np.linalg.norm(actions[i]) > 0:
