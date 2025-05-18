@@ -15,8 +15,8 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/FS_SCB"
-    simulator = SettingsSimulator(settings_dir, "diff_model_rand.json")
+    settings_dir = "../configurations/all"
+    simulator = SettingsSimulator(settings_dir, "sparse.json")
 
     simulator.simulate_all()
 

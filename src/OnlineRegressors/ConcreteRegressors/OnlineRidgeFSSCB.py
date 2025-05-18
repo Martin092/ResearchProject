@@ -30,7 +30,7 @@ class RidgeFSSCB(Regressor):
         regrets = np.array([])
         for i, pred in enumerate(self.pred_history):
             loss += (pred - self.real_history[i]) ** 2
-            optimal_loss += ((w_optimal.T @ self.x_history[i][0]) - self.real_history[i]) ** 2
+            optimal_loss += ((w_optimal.T @ self.x_history[i]) - self.real_history[i]) ** 2
             regrets = np.append(regrets, loss - optimal_loss)
 
         return regrets

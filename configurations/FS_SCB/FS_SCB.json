@@ -23,7 +23,7 @@
       "learner_config" : {
         "l_rate": 1.8,
         "strategy": "random",
-        "num_features": 100,
+        "num_features": 80,
         "learn_rate": 200,
         "strat_params": {
           "M": 50

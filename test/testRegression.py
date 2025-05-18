@@ -48,14 +48,14 @@ def satisfies_RIP(X, w, eps, k):
     return left <= mid <= right
 
 
-d = 1000
-density = 0.4
-noise = 0.05
+d = 100
+density = 0.1
+noise = 0.005
 eps = 0.2
 k = int(density * d)
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
-n = 100
+n = 10000
 print(n)
 
 w_star = sp.random(d, 1, density=density)
@@ -68,53 +68,55 @@ print("t0 is ", t0)
 t0 = k
 params = {"sigma": noise,
           "k": k,
-          "k0": int(0.8 * d),
-          "t0": 1
+          "k0": int(0.7 * d),
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
     }
 
-# reg1 = AdaptiveRegressor(d, params)
+reg1 = AdaptiveRegressor(d, params)
 params_r = {"lambda_reg": 0.2}
 reg2 = RidgeFSSCB(d, params_r)
 
-# res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
+res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
 res2, t2, reals2 = test_adaptive(Xt, reg2, d, density, noise, n, w_star=w_star)
 
-# print(f"Adaptive runtime: {t1}")
+print(f"Adaptive runtime: {t1}")
 print(f"Ridge runtime: {t2}")
 
 
-# plt.plot(res1, label="POSLR")
-plt.plot(res2, label="Ridge")
-plt.legend()
-plt.xlabel("Rounds")
-plt.ylabel("MSE")
-plt.title("Average MSE")
+fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
+fig.suptitle("Comparison of FSLR and Ridge Regression (d=100, s=10)", fontsize=16)
+
+# Plot MSE
+line1, = axs[0].plot(res1, label="POSLR")
+line2, = axs[0].plot(res2, label="Ridge")
+axs[0].set_xlabel("Rounds")
+axs[0].set_ylabel("MSE")
+axs[0].set_title("Average MSE")
+
+# Plot Regret
+axs[1].plot(np.sqrt(reg1.regret(w_star, reals=reals1)), label="POSLR")
+axs[1].plot(np.sqrt(reg2.regret(w_star)), label="Ridge")
+axs[1].set_xlabel("Rounds")
+axs[1].set_ylabel("Regret")
+axs[1].set_title("Cumulative Regret")
+
+
+fig.legend([line1, line2], [f"FSLR with k={params['k0']}", "Ridge"], loc='lower center', ncol=2)
+
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.show()
 
-# print("W star is ", w_star.todense())
-# print("POSLR w is ", reg1.w)
-# plt.scatter(reg1.x_history, reals1, label="Real data")
-# plt.scatter(reg1.x_history, reg1.pred_history, label="Predicted")
+
+
+
+
+# # plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)
+# plt.scatter(reals2, reg2.pred_history, label="Ridge", alpha=0.4)
+# # x = np.linspace(np.min(reals1), np.max(reals1), 100)
+# # plt.plot(x, x)
 # plt.legend()
-# plt.title("Real vs Adaptive")
+# plt.title("Predictions")
 # plt.show()
-
-
-# plt.plot(reg1.regret(w_star, reals=reals1), label="POSLR")
-plt.plot(reg2.regret(w_star), label="Ridge")
-plt.legend()
-plt.xlabel("Rounds")
-plt.ylabel("Regret")
-plt.title("Average Regret")
-plt.show()
-
-
-
-# plt.scatter(reals1, reg1.pred_history, label="POSLR", alpha=0.4)
-plt.scatter(reals2, reg2.pred_history, label="Ridge", alpha=0.4)
-# x = np.linspace(np.min(reals1), np.max(reals1), 100)
-# plt.plot(x, x)
-plt.legend()
-plt.title("Predictions")
-plt.show()
 
