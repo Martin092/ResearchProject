@@ -22,9 +22,11 @@ class FSSquareCB(AbstractLearner):
         self.strat_map = {
             "random": self.random_model_generator,
             "all_subsets": self.all_subsets,
-            "theta_weights": self.theta_weights # M, warmup, s
+            "theta_weights": self.theta_weights, # M, warmup, s
+            "theta_weights_exp": self.theta_weights
           }
         self.learn_rate = params["learn_rate"]
+        self.exp_recalculation = None
 
         self.delta = 0.1
         self.G = 1
@@ -35,9 +37,9 @@ class FSSquareCB(AbstractLearner):
         return np.ones((1, self.d), dtype=bool)
 
     def theta_weights_warmed_up(self):
-        assert self.models.shape[0] == 1
-        assert len(self.oracles) == 1
-        assert len(self.oracle_weights) == 1
+        assert self.strategy == "theta_weights_exp" or self.models.shape[0] == 1
+        assert self.strategy == "theta_weights_exp" or len(self.oracles) == 1
+        assert self.strategy == "theta_weights_exp" or len(self.oracle_weights) == 1
 
         M = self.strat_params["M"]
         s = self.strat_params["s"]
@@ -97,6 +99,8 @@ class FSSquareCB(AbstractLearner):
 
         for t in range(1, self.T + 1):
             if self.strategy == "theta_weights" and self.strat_params["warmup"] == t:
+                self.theta_weights_warmed_up()
+            elif self.strategy == "theta_weights_exp" and self.t & (self.t - 1) == 0:
                 self.theta_weights_warmed_up()
 
             self.action_set = env.observe_actions()
