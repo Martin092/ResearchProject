@@ -6,19 +6,47 @@
 
   "simulations" : [
     {
-      "name" : "SquareCB",
+      "name" : "SquareCB - Adaptive",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 500,
 
       "env_config" : {
-        "d" : 100,
-        "sparsity":0.1,
+        "d" : 1000,
+        "sparsity":0.005,
         "noise": 0.01,
-        "k": 100
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 800,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "SquareCB - Ridge",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 500,
+
+      "env_config" : {
+        "d" : 1000,
+        "sparsity":0.005,
+        "noise": 0.01,
+        "k": 10
       },
       "learner_config" : {
         "learn_rate": 200,

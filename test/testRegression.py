@@ -68,7 +68,7 @@ print("t0 is ", t0)
 t0 = k
 params = {"sigma": noise,
           "k": k,
-          "k0": int(0.7 * d),
+          "k0": int(0.5 * d),
           "t0": 1,
           "C": 0.01,
           "delta": 0.05
@@ -86,7 +86,7 @@ print(f"Ridge runtime: {t2}")
 
 
 fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
-fig.suptitle("Comparison of FSLR and Ridge Regression (d=100, s=10)", fontsize=16)
+fig.suptitle(f"Comparison of FSLR and Ridge Regression (d={d}, s={int(d * density)})", fontsize=16)
 
 # Plot MSE
 line1, = axs[0].plot(res1, label="POSLR")

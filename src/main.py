@@ -15,8 +15,8 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations"
-    simulator = SettingsSimulator(settings_dir, "thomson.json")
+    settings_dir = "../configurations/SquareCB"
+    simulator = SettingsSimulator(settings_dir, "SquareCB.json")
 
     simulator.simulate_all()
 

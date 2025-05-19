@@ -28,6 +28,7 @@ class AdaptiveRegressor(Regressor):
         return float(self.w.T @ x)
 
     def update(self, x, pred, real):
+        # more than t0 and is power of 2
         if self.t > self.t0 and (self.t & (self.t - 1) == 0):
             w_hat = self.dantzig_selector().flatten()
             idx = np.argsort(np.abs(w_hat))
