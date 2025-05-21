@@ -16,16 +16,17 @@ from tqdm import tqdm
 
 def test_adaptive(Xt, reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star=None):
     if w_star == None:
-        w_star = sp.random(d, 1, density=density)
+        w_star = sp.random(1, d, density=density)
         w_star /= sp.linalg.norm(w_star, 1)
+        w_star = w_star.todense().flatten()
 
     reals = np.zeros(n)
     start = time.time()
     for i in tqdm(range(n)):
-        xt = Xt[i].reshape(-1, 1)
+        xt = Xt[i]
         y_pred = reg.predict(xt)
-        y_real = (w_star.T @ xt)[0][0] + np.random.normal(0, noise)
-        reals[i] = w_star.T @ xt
+        y_real = (w_star @ xt)[0] + np.random.normal(0, noise)
+        reals[i] = w_star @ xt
         reals[i] = y_real
         reg.update(xt, y_pred, y_real)
     runtime = time.time() - start
@@ -44,7 +45,7 @@ def test_adaptive(Xt, reg: Regressor, d, density, noise, n, eps=0.2, k=1, w_star
 def satisfies_RIP(X, w, eps, k):
     left = (1 - eps) * sp.linalg.norm(w)
     right = (1 + eps) * sp.linalg.norm(w)
-    mid = (1 / np.sqrt(X.shape[0])) * np.linalg.norm(X @ w)
+    mid = (1 / np.sqrt(X.shape[0])) * np.linalg.norm(X @ w.T)
     return left <= mid <= right
 
 
@@ -58,7 +59,7 @@ n *= 2
 n = 10000
 print(n)
 
-w_star = sp.random(d, 1, density=density)
+w_star = sp.random(1, d, density=density)
 w_star /= sp.linalg.norm(w_star, 1)
 
 Xt = np.random.normal(0, 1, size=(n, d))

@@ -65,7 +65,8 @@ class SquareCB(AbstractLearner):
 
 
     def feature_map(self, action, context):
-        return action.reshape(-1, 1)
+        assert action.ndim == 1
+        return action
 
 
     def select_action(self, context):
@@ -98,13 +99,6 @@ class SquareCB(AbstractLearner):
 
         probabilities = np.clip(probabilities, 0, 1)
         probabilities = probabilities / np.sum(probabilities)
-
-
-        # if self.t % 100 == 0:
-        #     print(probabilities)
-        #     print(self.t, "^")
-        #     plt.bar(np.arange(len(probabilities)), probabilities)
-        #     plt.show()
 
         index = np.random.choice(np.arange(len(self.action_set)), p=probabilities)
         return index, self.action_set[index], rewards[index]
