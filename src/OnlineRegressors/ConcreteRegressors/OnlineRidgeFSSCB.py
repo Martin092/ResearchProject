@@ -7,16 +7,20 @@ class RidgeFSSCB(Regressor):
         self.x_history = np.empty((0, d))
 
         self.lambda_reg = params["lambda_reg"]
-        self.w = np.zeros((d, 1))
+        self.w = np.zeros(d)
         self.lam_eye = self.lambda_reg * np.eye(self.d)
         self.V = np.copy(self.lam_eye)
 
     def predict(self, x):
-        # dot product
-        return self.w.T @ x.reshape(-1, 1)
+        assert x.ndim == 1
+        return np.dot(self.w, x)
 
     def update(self, x, pred, real):
-        self.x_history = np.vstack((self.x_history, x.reshape(1, -1)))
+        assert x.ndim == 1
+        assert pred.ndim == 0
+        assert real.ndim == 0
+
+        self.x_history = np.vstack((self.x_history, x))
         self.real_history = np.append(self.real_history, real)
 
         self.V = self.lam_eye + self.x_history.T @ self.x_history
@@ -30,7 +34,7 @@ class RidgeFSSCB(Regressor):
         regrets = np.array([])
         for i, pred in enumerate(self.pred_history):
             loss += (pred - self.real_history[i]) ** 2
-            optimal_loss += ((w_optimal.T @ self.x_history[i][0]) - self.real_history[i]) ** 2
+            optimal_loss += ((w_optimal @ self.x_history[i]) - self.real_history[i]) ** 2
             regrets = np.append(regrets, loss - optimal_loss)
 
         return regrets

@@ -12,6 +12,10 @@ class Regressor(ABC):
         self.wt = np.array([np.zeros(d)])
         self.d = d
 
+        self.features_subset = None
+        if "features_subset" in params.keys():
+            self.features_subset = params["features_subset"]
+
     @abstractmethod
     def predict(self, x):
         pass
@@ -28,3 +32,10 @@ class Regressor(ABC):
         pred = self.predict(x)
         self.update(x, pred, y)
         return pred
+
+    def feature_map(self, action, context):
+        if self.features_subset:
+            mask = np.random.choice(self.d, size=self.d - self.features_subset, replace=False)
+            action[mask] = 0
+        return action
+

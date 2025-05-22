@@ -3,9 +3,10 @@ from sklearn.linear_model import SGDRegressor
 
 from src.Environments import AbstractEnvironment
 from src.Learners import AbstractLearner
+from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
 
 
-class LinUCBLearner(AbstractLearner):
+class ThomsonSampling(AbstractLearner):
 
     def __init__(self, T : int, params : dict):
         super().__init__(T, params)
@@ -15,21 +16,20 @@ class LinUCBLearner(AbstractLearner):
         self.d = None
         self.k = None
         self.regressor = None
-        self.delta = params["delta"]
         self.regularization = params["regularization"]
 
-        self.b = None
         self.V = None
-        self.theta = None
 
 
     def run(self, env: AbstractEnvironment, logger=None):
         self.d = env.get_ambient_dim()
         self.k = env.k
 
-        self.b = np.zeros(self.d)
         self.V = self.regularization * np.eye(self.d)
-        self.theta = np.zeros(self.d)
+        # regressor is used to estimate theta, which we can then use in the prior as the mean of the distribution
+        # the regressor has w = 0 in the beginning, which is our prior - p(theta) = N(0, lambda * I)
+        self.regressor = RidgeFSSCB(self.d, {"lambda_reg": self.regularization})
+
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
@@ -52,25 +52,21 @@ class LinUCBLearner(AbstractLearner):
         return env.get_cumulative_regret()
 
     def select_action(self, context):
-        beta = np.sqrt(self.regularization)
-        beta += np.sqrt(2 * np.log(1/self.delta) + self.d * (np.log(1 + (self.t)/(self.regularization * self.d))))
+        theta = np.random.multivariate_normal(self.regressor.w.flatten(), np.linalg.inv(self.V)).reshape(-1, 1)
 
-        V_inv = np.linalg.inv(self.V)
-        max_ucb = -float('inf')
-        best_action = self.action_set[0]
-        for a in self.action_set:
-            feat = self.feature_map(a, context)
-            ucb = np.dot(feat, self.theta )+ beta * np.sqrt(np.dot(feat.T, np.dot(V_inv, feat)))
-            if ucb > max_ucb:
-                max_ucb = ucb
-                best_action = a
+        reward = -float('inf')
+        action_index = 0
+        for i, a in enumerate(self.action_set):
+            new_reward = a.T @ theta
+            if new_reward > reward:
+                reward = new_reward
+                action_index = i
 
-        return best_action
+        return self.action_set[action_index]
 
     def update(self, feat, reward):
         self.V += feat @ feat.T
-        self.b += reward * feat
-        self.theta = np.linalg.inv(self.V) @ self.b
+        self.regressor.predict_and_fit(feat, reward)
 
     def total_reward(self):
         total = 0
@@ -83,3 +79,6 @@ class LinUCBLearner(AbstractLearner):
         for (a, c, r) in self.history:
             total.append(r)
         return total
+
+    def feature_map(self, action, context):
+        return (action).reshape(-1, 1)

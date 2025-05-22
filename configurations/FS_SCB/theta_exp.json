@@ -6,10 +6,10 @@
 
   "simulations" : [
     {
-      "name" : "SquareCB",
+      "name" : "Informed FS-SCB",
 
       "env" : "SquareCBEnvironment",
-      "learner" : "SquareCB",
+      "learner" : "FSSquareCB",
 
       "trials" : 10,
       "horizon" : 1000,
@@ -21,37 +21,39 @@
         "k": 100
       },
       "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "theta_weights_exp",
+        "num_features": 80,
         "learn_rate": 200,
-        "reg": "AdaptiveRegressor",
-        "params_reg": {
-          "sigma": 0.01,
-          "k": 10,
-          "k0": 90,
-          "t0": 1,
-          "C": 0.01,
-          "delta": 0.05
+        "strat_params": {
+          "M": 20,
+          "s": 5
         }
       }
     },
     {
-      "name" : "LinUCB",
+      "name" : "Uninformed FS-SCB",
 
       "env" : "SquareCBEnvironment",
-      "learner" : "LinUCBLearner",
+      "learner" : "FSSquareCB",
 
       "trials" : 10,
       "horizon" : 1000,
 
       "env_config" : {
-        "features_subset": 90,
         "d" : 100,
         "sparsity":0.1,
         "noise": 0.01,
         "k": 100
       },
       "learner_config" : {
-        "delta": 0.95,
-        "regularization": 0.01
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 80,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 20
+        }
       }
     }
   ]

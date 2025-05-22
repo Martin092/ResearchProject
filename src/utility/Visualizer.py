@@ -111,9 +111,9 @@ class Visualizer:
             plt.plot(time, reward, label=f"{name}")
             plt.fill_between(time, reward - std_reward, reward + std_reward, alpha=0.1)
 
-        plt.xlabel('Round t')
-        plt.ylabel('Cumulative Reward')
-        plt.title("Cumulative Reward across Rounds")
+        plt.xlabel('Round t', fontsize=16)
+        plt.ylabel('Cumulative Reward', fontsize=16)
+        plt.title("Cumulative Reward across Rounds", fontsize=18)
         plt.legend()
         plt.tight_layout()
 
@@ -134,10 +134,9 @@ class Visualizer:
             plt.plot(time, cum_regret, label=f"{name}")
             plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.1)
 
-
-        plt.xlabel('Round t')
-        plt.ylabel('Cumulative Regret')
-        plt.title("Cumulative Regret across Rounds")
+        plt.xlabel('Round', fontsize=16)
+        plt.ylabel('Cumulative Regret', fontsize=16)
+        plt.title("Cumulative Regret across Rounds", fontsize=18)
         plt.legend()
         plt.tight_layout()
 
@@ -155,9 +154,9 @@ class Visualizer:
             plt.plot(time, simp_regret, label=f"{name}")
             plt.fill_between(time, simp_regret - std_simp_regret, simp_regret + std_simp_regret, alpha=0.1)
 
-        plt.xlabel('Round t')
-        plt.ylabel('Simple Regret')
-        plt.title("Simple Regret across Rounds")
+        plt.xlabel('Round t', fontsize=16)
+        plt.ylabel('Simple Regret', fontsize=16)
+        plt.title("Simple Regret across Rounds", fontsize=18)
         plt.legend()
         plt.tight_layout()
 
@@ -175,9 +174,9 @@ class Visualizer:
             plt.plot(time, avg_regret, label=f"{name}")
             plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
 
-        plt.xlabel('Round t')
-        plt.ylabel('Average Regret')
-        plt.title("Average Regret across Rounds")
+        plt.xlabel('Round t', fontsize=16)
+        plt.ylabel('Average Regret', fontsize=16)
+        plt.title("Average Regret across Rounds", fontsize=18)
         plt.legend()
         plt.tight_layout()
 
