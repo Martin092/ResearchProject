@@ -27,9 +27,9 @@ class LinUCBLearner(AbstractLearner):
         self.d = env.get_ambient_dim()
         self.k = env.k
 
-        self.b = np.zeros(self.d).reshape(-1, 1)
+        self.b = np.zeros(self.d)
         self.V = self.regularization * np.eye(self.d)
-        self.theta = np.zeros((self.d, 1))
+        self.theta = np.zeros(self.d)
 
         for t in range(1, self.T + 1):
             self.action_set = env.observe_actions()
@@ -60,7 +60,7 @@ class LinUCBLearner(AbstractLearner):
         best_action = self.action_set[0]
         for a in self.action_set:
             feat = self.feature_map(a, context)
-            ucb = feat.T @ self.theta + beta * np.sqrt(feat.T @ V_inv @ feat)
+            ucb = np.dot(feat, self.theta )+ beta * np.sqrt(np.dot(feat.T, np.dot(V_inv, feat)))
             if ucb > max_ucb:
                 max_ucb = ucb
                 best_action = a
@@ -83,6 +83,3 @@ class LinUCBLearner(AbstractLearner):
         for (a, c, r) in self.history:
             total.append(r)
         return total
-
-    def feature_map(self, action, context):
-        return (action).reshape(-1, 1)

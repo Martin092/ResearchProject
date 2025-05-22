@@ -6,29 +6,29 @@
 
   "simulations" : [
     {
-      "name" : "SquareCB k0=0.8d",
+      "name" : "SquareCB",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
-        "noise": 0.1,
-        "k": 10
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
       },
       "learner_config" : {
-        "learn_rate": 0.2,
+        "learn_rate": 200,
         "reg": "AdaptiveRegressor",
         "params_reg": {
-          "sigma": 0.1,
+          "sigma": 0.01,
           "k": 10,
-          "k0": 180,
+          "k0": 90,
           "t0": 1,
-          "C": 0.03,
+          "C": 0.01,
           "delta": 0.05
         }
       }
@@ -36,21 +36,22 @@
     {
       "name" : "LinUCB",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "LinUCBLearner",
 
       "trials" : 10,
-      "horizon" : 100,
+      "horizon" : 1000,
 
       "env_config" : {
-        "d" : 200,
-        "sparsity":0.05,
-        "noise": 0.1,
-        "k": 10
+        "features_subset": 90,
+        "d" : 100,
+        "sparsity":0.1,
+        "noise": 0.01,
+        "k": 100
       },
       "learner_config" : {
         "delta": 0.95,
-        "regularization": 0.1
+        "regularization": 0.01
       }
     }
   ]
