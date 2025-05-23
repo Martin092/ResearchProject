@@ -6,11 +6,13 @@ from itertools import combinations
 from math import comb
 
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
+from sklearn.feature_selection import SelectKBest, r_regression
 
 
 class FSSquareCB(AbstractLearner):
     def __init__(self, T, params):
         super().__init__(T, params)
+        self.X = None
         self.d = None
         self.models = None
         self.oracles = []
@@ -23,7 +25,8 @@ class FSSquareCB(AbstractLearner):
             "random": self.random_model_generator,
             "all_subsets": self.all_subsets,
             "theta_weights": self.theta_weights, # M, warmup, s
-            "theta_weights_exp": self.theta_weights
+            "theta_weights_exp": self.theta_weights,
+            "AnovaF": self.theta_weights
           }
         self.learn_rate = params["learn_rate"]
         self.exp_recalculation = None
@@ -46,6 +49,35 @@ class FSSquareCB(AbstractLearner):
 
         theta = self.oracles[0].w
         indices = np.argsort(np.abs(theta.flatten()))[self.d - self.num_features - s:]
+        self.sample_models(M, indices)
+
+    def anova_selection(self):
+        assert self.strategy == "AnovaF"
+        assert self.models.shape[0] == 1
+        assert len(self.oracles) == 1
+        assert len(self.oracle_weights) == 1
+
+        M = self.strat_params["M"]
+        s = self.strat_params["s"]
+
+        selector = SelectKBest(r_regression, k=self.num_features + s).fit(self.X, list(map(lambda x: x[2], self.history)))
+        indices = selector.get_support()
+        indices = [i for i, val in enumerate(indices) if val]
+
+        self.sample_models(M, indices)
+
+    def sample_models(self, M, indices):
+        '''
+        Given a subset of all the features, it samples M models from the indices.
+        Each of the models is a mask with features being a subset of indices
+        It is therefore important to have the lenght of indices be longer
+        than the length of the features you want to project
+        :param M:
+        :param indices:
+        :return:
+        '''
+        assert len(indices) > self.num_features
+
         self.models = np.zeros((M, self.d), dtype=np.bool)
         self.oracles = []
         self.oracle_weights = np.ones(len(self.models))
@@ -55,7 +87,6 @@ class FSSquareCB(AbstractLearner):
             self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
             assert np.sum(self.models[i]) == self.num_features
         self.oracles = np.array(self.oracles)
-
         assert len(self.oracles) == len(self.models)
         assert len(self.oracle_weights) == len(self.models)
 
@@ -86,6 +117,7 @@ class FSSquareCB(AbstractLearner):
     def setup(self, env : AbstractEnvironment):
         self.d = env.get_ambient_dim()
         self.k = env.k
+        self.X = np.empty((0, self.d))
         self.models = self.strat_map[self.strategy]()
         for i in range(len(self.models)):
             self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
@@ -102,12 +134,15 @@ class FSSquareCB(AbstractLearner):
                 self.theta_weights_warmed_up()
             elif self.strategy == "theta_weights_exp" and self.t & (self.t - 1) == 0:
                 self.theta_weights_warmed_up()
+            elif self.strategy == "AnovaF" and self.strat_params["warmup"] == t:
+                self.anova_selection()
 
             self.action_set = env.observe_actions()
 
             context = env.generate_context()
             a_index, action, pred_reward = self.select_action(context)
             features = self.feature_map(action, context)
+            self.X = np.vstack((self.X, features))
 
             reward = env.reveal_reward(features)
             self.update_oracles(a_index, context, reward)
@@ -118,7 +153,8 @@ class FSSquareCB(AbstractLearner):
             if logger is not None:
                 logger.log_full(t, context, a_index, action, reward, env.regret[-1])
 
-            self.history.append((action, context, reward))
+            # self.history.append((action, context, reward))
+            self.history.append((None, None, reward))
             self.t += 1
 
         return env.get_cumulative_regret()
@@ -136,7 +172,7 @@ class FSSquareCB(AbstractLearner):
             for j, M in enumerate(self.models):
                 feat_subset = np.copy(feat)
                 feat_subset[~M] = 0
-                expert_rewards[j] = self.oracles[j].predict(feat_subset)[0]
+                expert_rewards[j] = self.oracles[j].predict(feat_subset)
 
             y = self.aggregate_rewards(expert_rewards)
             rewards[i] = y
@@ -171,7 +207,7 @@ class FSSquareCB(AbstractLearner):
             feat_subset = np.copy(feat)
             feat_subset[~self.models[i]] = 0
             pred = oracle.predict(feat_subset)
-            oracle.update(feat_subset, pred, [real_reward])
+            oracle.update(feat_subset, pred, real_reward)
 
             # TODO Weights use a scaled predictions, this is possibly bad. Not sure
             self.oracle_weights[i] *= np.exp(-2 * (real_scaled - (pred - r_min) / (r_max - r_min))**2)
@@ -228,7 +264,7 @@ class FSSquareCB(AbstractLearner):
         return y_final * (r_max - r_min) + r_min
 
     def feature_map(self, action, context):
-        return (action).reshape(-1, 1)
+        return (action)
 
     def total_reward(self):
         total = 0
