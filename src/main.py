@@ -15,8 +15,8 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/FS_SCB"
-    simulator = SettingsSimulator(settings_dir, "anova.json")
+    settings_dir = "../configurations"
+    simulator = SettingsSimulator(settings_dir, "LinUCB_config.json")
 
     simulator.simulate_all()
 

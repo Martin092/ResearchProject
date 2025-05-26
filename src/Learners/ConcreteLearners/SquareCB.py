@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib
-matplotlib.use("tkagg")
+# matplotlib.use("tkagg")
 from matplotlib import pyplot as plt
 
 from ..AbstractLearner import AbstractLearner

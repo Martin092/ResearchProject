@@ -6,63 +6,42 @@
 
   "simulations" : [
     {
-      "name" : "LinUCB",
+      "name" : "Random",
 
-      "env" : "NormalDistEnvironment",
-      "learner" : "LinUCBLearner",
+      "env" : "SquareCBEnvironment",
+      "learner" : "EGreedyLearner",
 
-      "trials" : 10,
-      "horizon" : 100,
-
-      "env_config" : {
-        "d" : 5,
-        "sparsity": 1,
-        "noise": 0.01,
-        "k": 20
-      },
-      "learner_config" : {
-        "delta": 0.1,
-        "regularization": 1
-      }
-    },
-    {
-      "name" : "LinUCB - 0.5",
-
-      "env" : "NormalDistEnvironment",
-      "learner" : "LinUCBLearner",
-
-      "trials" : 10,
-      "horizon" : 100,
+      "trials" : 5,
+      "horizon" : 10000,
 
       "env_config" : {
         "d" : 5,
         "sparsity": 1,
         "noise": 0.01,
-        "k": 20
+        "k": 10
       },
       "learner_config" : {
-        "delta": 0.5,
-        "regularization": 1
+        "epsilon": 1
       }
     },
     {
       "name" : "LinUCB - 1",
 
-      "env" : "NormalDistEnvironment",
+      "env" : "SquareCBEnvironment",
       "learner" : "LinUCBLearner",
 
-      "trials" : 10,
-      "horizon" : 100,
+      "trials" : 5,
+      "horizon" : 10000,
 
       "env_config" : {
         "d" : 5,
         "sparsity": 1,
         "noise": 0.01,
-        "k": 20
+        "k": 10
       },
       "learner_config" : {
-        "delta": 1,
-        "regularization": 3
+        "delta": 0.95,
+        "regularization": 1
       }
     }
   ]

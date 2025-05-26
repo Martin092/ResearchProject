@@ -18,7 +18,7 @@ class Visualizer:
         self.do_export = do_export
         self.do_show = do_show
 
-    def generate_graphs(self):
+    def generate_graphs(self, plot_name=None):
 
         df = pd.read_csv(self.log_filepath, sep=',', header=0, encoding='utf-8')
 
@@ -51,10 +51,10 @@ class Visualizer:
         )
 
         # Generate The graphs
-        self._generate_reward_graph(data)
+        # self._generate_reward_graph(data)
         # self._generate_arms_hist(df)
         # self._generate_reward_per_arm_graph(df)
-        self._generate_regret_graphs(data)
+        self._generate_regret_graphs(data, plot_name)
 
     def _generate_arms_hist(self, df):
         names = df['Name'].to_list()
@@ -120,7 +120,7 @@ class Visualizer:
         self.do_export and plt.savefig(os.path.join(self.figures_dir, "cumulative_reward.png"), dpi=300, bbox_inches='tight', format='png')
         self.do_show and (plt.show())
 
-    def _generate_regret_graphs(self, data):
+    def _generate_regret_graphs(self, data, plot_name=None):
 
         names = data['Name'].to_numpy()
 
@@ -134,51 +134,58 @@ class Visualizer:
             plt.plot(time, cum_regret, label=f"{name}")
             plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.1)
 
-        plt.xlabel('Round', fontsize=16)
-        plt.ylabel('Cumulative Regret', fontsize=16)
-        plt.title("Cumulative Regret across Rounds", fontsize=18)
+        # plt.xlabel('Round', fontsize=16)
+        # plt.ylabel('Cumulative Regret', fontsize=16)
+        # plt.title("Cumulative Regret across Rounds", fontsize=18)
+        plt.xlabel('Round')
+        plt.ylabel('Cumulative Regret')
+        if plot_name is None:
+            plt.title("Cumulative Regret across Rounds")
+        else:
+            plt.title(plot_name)
+
         plt.legend()
         plt.tight_layout()
 
         self.do_export and plt.savefig(os.path.join(self.figures_dir, "cumulative_regret.png"), dpi=300, bbox_inches='tight', format='png')
         self.do_show and plt.show()
 
-        plt.figure()
+        # plt.figure()
+        #
+        # for name in set(names):
+        #
+        #     time = data.loc[data['Name'] == name, 'Round'].to_numpy()
+        #     simp_regret = data.loc[data['Name'] == name,'avg_cum_min_regret'].to_numpy()
+        #     std_simp_regret = data.loc[data['Name'] == name,'std_cum_min_regret'].to_numpy()
+        #
+        #     plt.plot(time, simp_regret, label=f"{name}")
+        #     plt.fill_between(time, simp_regret - std_simp_regret, simp_regret + std_simp_regret, alpha=0.1)
+        #
+        # plt.xlabel('Round t', fontsize=16)
+        # plt.ylabel('Simple Regret', fontsize=16)
+        # plt.title("Simple Regret across Rounds", fontsize=18)
+        # plt.legend()
+        # plt.tight_layout()
+        #
+        # self.do_export and plt.savefig(os.path.join(self.figures_dir, "simple_regret.png"), dpi=300, bbox_inches='tight', format='png')
+        # self.do_show and plt.show()
+        #
+        # plt.figure()
+        #
+        # for name in set(names):
+        #
+        #     time = data.loc[data['Name'] == name, 'Round'].to_numpy()
+        #     avg_regret = data.loc[data['Name'] == name,'avg_cum_avg_regret'].to_numpy()
+        #     std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
+        #
+        #     plt.plot(time, avg_regret, label=f"{name}")
+        #     plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
+        #
+        # plt.xlabel('Round t', fontsize=16)
+        # plt.ylabel('Average Regret', fontsize=16)
+        # plt.title("Average Regret across Rounds", fontsize=18)
+        # plt.legend()
+        # plt.tight_layout()
 
-        for name in set(names):
-
-            time = data.loc[data['Name'] == name, 'Round'].to_numpy()
-            simp_regret = data.loc[data['Name'] == name,'avg_cum_min_regret'].to_numpy()
-            std_simp_regret = data.loc[data['Name'] == name,'std_cum_min_regret'].to_numpy()
-
-            plt.plot(time, simp_regret, label=f"{name}")
-            plt.fill_between(time, simp_regret - std_simp_regret, simp_regret + std_simp_regret, alpha=0.1)
-
-        plt.xlabel('Round t', fontsize=16)
-        plt.ylabel('Simple Regret', fontsize=16)
-        plt.title("Simple Regret across Rounds", fontsize=18)
-        plt.legend()
-        plt.tight_layout()
-
-        self.do_export and plt.savefig(os.path.join(self.figures_dir, "simple_regret.png"), dpi=300, bbox_inches='tight', format='png')
-        self.do_show and plt.show()
-
-        plt.figure()
-
-        for name in set(names):
-
-            time = data.loc[data['Name'] == name, 'Round'].to_numpy()
-            avg_regret = data.loc[data['Name'] == name,'avg_cum_avg_regret'].to_numpy()
-            std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
-
-            plt.plot(time, avg_regret, label=f"{name}")
-            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
-
-        plt.xlabel('Round t', fontsize=16)
-        plt.ylabel('Average Regret', fontsize=16)
-        plt.title("Average Regret across Rounds", fontsize=18)
-        plt.legend()
-        plt.tight_layout()
-
-        self.do_export and plt.savefig(os.path.join(self.figures_dir, "average_regret.png"), dpi=300, bbox_inches='tight', format='png')
-        self.do_show and plt.show()
+        # self.do_export and plt.savefig(os.path.join(self.figures_dir, "average_regret.png"), dpi=300, bbox_inches='tight', format='png')
+        # self.do_show and plt.show()

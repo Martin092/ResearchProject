@@ -6,7 +6,7 @@ from itertools import combinations
 from math import comb
 
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
-from sklearn.feature_selection import SelectKBest, r_regression
+from sklearn.feature_selection import SelectKBest, f_regression
 
 
 class FSSquareCB(AbstractLearner):
@@ -60,7 +60,7 @@ class FSSquareCB(AbstractLearner):
         M = self.strat_params["M"]
         s = self.strat_params["s"]
 
-        selector = SelectKBest(r_regression, k=self.num_features + s).fit(self.X, list(map(lambda x: x[2], self.history)))
+        selector = SelectKBest(f_regression, k=self.num_features + s).fit(self.X, list(map(lambda x: x[2], self.history)))
         indices = selector.get_support()
         indices = [i for i, val in enumerate(indices) if val]
 

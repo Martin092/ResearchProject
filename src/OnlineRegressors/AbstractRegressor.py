@@ -33,9 +33,3 @@ class Regressor(ABC):
         self.update(x, pred, y)
         return pred
 
-    def feature_map(self, action, context):
-        if self.features_subset:
-            mask = np.random.choice(self.d, size=self.d - self.features_subset, replace=False)
-            action[mask] = 0
-        return action
-

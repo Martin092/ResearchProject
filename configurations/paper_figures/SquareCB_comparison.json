@@ -1,0 +1,116 @@
+{
+  "name" : "Number of features comparison",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB k=90",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 90,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "LinUCB with full features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 1
+      }
+    },
+    {
+      "name" : "LinUCB with k=90",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "features_subset": 90,
+        "delta": 0.95,
+        "regularization": 1
+      }
+    },
+    {
+      "name" : "ThomsonSampling",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "ThomsonSampling",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "regularization": 0.5
+      }
+    },
+    {
+      "name" : "Random",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "EGreedyLearner",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "epsilon": 1
+      }
+    }
+  ]
+}

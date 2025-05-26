@@ -54,13 +54,14 @@ class LinUCBLearner(AbstractLearner):
     def select_action(self, context):
         beta = np.sqrt(self.regularization)
         beta += np.sqrt(2 * np.log(1/self.delta) + self.d * (np.log(1 + (self.t)/(self.regularization * self.d))))
+        beta = np.sqrt(np.log(1/self.delta))
 
         V_inv = np.linalg.inv(self.V)
         max_ucb = -float('inf')
         best_action = self.action_set[0]
         for a in self.action_set:
             feat = self.feature_map(a, context)
-            ucb = np.dot(feat, self.theta )+ beta * np.sqrt(np.dot(feat.T, np.dot(V_inv, feat)))
+            ucb = np.dot(feat, self.theta) + beta * np.sqrt(np.dot(feat, np.dot(V_inv, feat)))
             if ucb > max_ucb:
                 max_ucb = ucb
                 best_action = a

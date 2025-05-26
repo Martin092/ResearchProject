@@ -46,8 +46,6 @@ class EGreedyLearner(AbstractLearner):
             if logger is not None:
                 logger.log(t, reward, env.regret[-1])
 
-    def feature_map(self, action, context):
-        return (action).reshape(-1, 1)
 
     def select_action(self, context):
         if not hasattr(self.regressor, 'coef_') or np.random.rand() < self.epsilon:
@@ -55,7 +53,7 @@ class EGreedyLearner(AbstractLearner):
             return self.action_set[i]
         else:
             features = [self.feature_map(a, context) for a in self.action_set]
-            estimated_rewards = self.regressor.predict(np.array(features).reshape(len(features), -1))
+            estimated_rewards = self.regressor.predict(np.array(features))
             best_reward_id = np.argmax(estimated_rewards)
             return self.action_set[best_reward_id]
     
