@@ -54,27 +54,6 @@
       }
     },
     {
-      "name" : "LinUCB with k=90",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "LinUCBLearner",
-
-      "trials" : 10,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity": 0.05,
-        "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "features_subset": 90,
-        "delta": 0.95,
-        "regularization": 1
-      }
-    },
-    {
       "name" : "ThomsonSampling",
 
       "env" : "SquareCBEnvironment",

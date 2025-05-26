@@ -54,7 +54,7 @@ class LinUCBLearner(AbstractLearner):
     def select_action(self, context):
         beta = np.sqrt(self.regularization)
         beta += np.sqrt(2 * np.log(1/self.delta) + self.d * (np.log(1 + (self.t)/(self.regularization * self.d))))
-        beta = np.sqrt(np.log(1/self.delta))
+        # beta = np.sqrt(np.log(1/self.delta))
 
         V_inv = np.linalg.inv(self.V)
         max_ucb = -float('inf')

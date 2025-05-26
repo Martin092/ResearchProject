@@ -6,22 +6,23 @@
 
   "simulations" : [
     {
-      "name" : "Random",
+      "name" : "UCB",
 
       "env" : "SquareCBEnvironment",
-      "learner" : "EGreedyLearner",
+      "learner" : "UCBLearner",
 
       "trials" : 5,
       "horizon" : 10000,
 
       "env_config" : {
-        "d" : 5,
+        "d" : 3,
         "sparsity": 1,
         "noise": 0.01,
-        "k": 10
+        "k": 5
       },
       "learner_config" : {
-        "epsilon": 1
+        "delta": 0.0001,
+        "regularization": 1
       }
     },
     {
@@ -34,14 +35,33 @@
       "horizon" : 10000,
 
       "env_config" : {
-        "d" : 5,
+        "d" : 3,
         "sparsity": 1,
         "noise": 0.01,
-        "k": 10
+        "k": 5
       },
       "learner_config" : {
-        "delta": 0.95,
-        "regularization": 1
+        "delta": 0.00001,
+        "regularization": 0.7
+      }
+    },
+    {
+      "name" : "Random",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "EGreedyLearner",
+
+      "trials" : 5,
+      "horizon" : 10000,
+
+      "env_config" : {
+        "d" : 3,
+        "sparsity": 1,
+        "noise": 0.01,
+        "k": 5
+      },
+      "learner_config" : {
+        "epsilon": 1
       }
     }
   ]

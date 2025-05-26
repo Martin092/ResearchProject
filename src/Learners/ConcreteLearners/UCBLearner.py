@@ -30,14 +30,11 @@ class UCBLearner(AbstractLearner):
 
             # Reveal context, and select action (obliviously)
             context = env.generate_context()
-            action = self.select_action(context)
+            action, action_index = self.select_action(context)
 
             # Reveal the reward
-            reward = env.reveal_reward(np.array(action).reshape(1, -1))
+            reward = env.reveal_reward(action)
             self.rewards.append(reward)
-
-            # Update counts and reward averages
-            action_index = self.action_set.index(action)
 
             self.averages[action_index] = (self.averages[action_index] * self.counts[action_index] + reward) / (1 + self.counts[action_index])
             self.counts[action_index] += 1
@@ -52,14 +49,13 @@ class UCBLearner(AbstractLearner):
     def select_action(self, context):
         # Compute the index function for all actions,
         # and select the action with the highest index
-        best_ucb = np.argmax([self.compute_ucb_index(a) for a in self.action_set])
+        best_ucb = np.argmax([self.compute_ucb_index(i) for i, a in enumerate(self.action_set)])
         action = self.action_set[best_ucb]
 
-        return action
+        return action, best_ucb
 
     def compute_ucb_index(self, action):
-
-        index = self.action_set.index(action)
+        index = action
 
         if self.counts[index] == 0:
             return float('inf')
@@ -70,7 +66,6 @@ class UCBLearner(AbstractLearner):
 
 
     def total_reward(self):
-
         return np.sum(self.rewards)
 
     def cum_reward(self):

@@ -65,7 +65,7 @@ class ThomsonSampling(AbstractLearner):
         return self.action_set[action_index]
 
     def update(self, feat, reward):
-        self.V += feat @ feat.T
+        self.V += np.dot(feat, feat.T)
         self.regressor.predict_and_fit(feat, reward)
 
     def total_reward(self):
@@ -79,6 +79,3 @@ class ThomsonSampling(AbstractLearner):
         for (a, c, r) in self.history:
             total.append(r)
         return total
-
-    def feature_map(self, action, context):
-        return (action).reshape(-1, 1)
