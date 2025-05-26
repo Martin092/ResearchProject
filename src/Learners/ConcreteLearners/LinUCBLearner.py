@@ -69,7 +69,7 @@ class LinUCBLearner(AbstractLearner):
         return best_action
 
     def update(self, feat, reward):
-        self.V += feat @ feat.T
+        self.V += np.reshape(feat, (-1, 1)) @ np.reshape(feat, (1, -1))
         self.b += reward * feat
         self.theta = np.linalg.inv(self.V) @ self.b
 

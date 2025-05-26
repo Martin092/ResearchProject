@@ -11,7 +11,7 @@
       "env" : "SquareCBEnvironment",
       "learner" : "UCBLearner",
 
-      "trials" : 5,
+      "trials" : 15,
       "horizon" : 10000,
 
       "env_config" : {
@@ -21,7 +21,7 @@
         "k": 5
       },
       "learner_config" : {
-        "delta": 0.0001,
+        "delta": 0.01,
         "regularization": 1
       }
     },
@@ -31,7 +31,7 @@
       "env" : "SquareCBEnvironment",
       "learner" : "LinUCBLearner",
 
-      "trials" : 5,
+      "trials" : 15,
       "horizon" : 10000,
 
       "env_config" : {
@@ -41,27 +41,8 @@
         "k": 5
       },
       "learner_config" : {
-        "delta": 0.00001,
+        "delta": 0.01,
         "regularization": 0.7
-      }
-    },
-    {
-      "name" : "Random",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "EGreedyLearner",
-
-      "trials" : 5,
-      "horizon" : 10000,
-
-      "env_config" : {
-        "d" : 3,
-        "sparsity": 1,
-        "noise": 0.01,
-        "k": 5
-      },
-      "learner_config" : {
-        "epsilon": 1
       }
     }
   ]
