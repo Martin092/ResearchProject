@@ -12,7 +12,7 @@
       "learner" : "SquareCB",
 
       "trials" : 5,
-      "horizon" : 500,
+      "horizon" : 5000,
 
       "env_config" : {
         "d" : 100,
@@ -21,15 +21,15 @@
         "k": 10
       },
       "learner_config" : {
-        "learn_rate": 200,
+        "learn_rate": 400,
         "reg": "AdaptiveRegressor",
         "params_reg": {
           "sigma": 0.01,
           "k": 5,
           "k0": 80,
           "t0": 1,
-          "C": 0.01,
-          "delta": 0.05
+          "C": 0.1,
+          "delta": 0.95
         }
       }
     },
@@ -40,7 +40,7 @@
       "learner" : "SquareCB",
 
       "trials" : 5,
-      "horizon" : 500,
+      "horizon" : 5000,
 
       "env_config" : {
         "d" : 100,

@@ -1,0 +1,205 @@
+{
+  "name" : "Simulation Example",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "lr=200, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=100, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 100,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=20, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=1, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 1,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=400, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 400,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=700, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 700,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    },
+    {
+      "name" : "lr=0.1, C=0.01, delta=0.05",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 0.1,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.01,
+          "delta": 0.05
+        }
+      }
+    }
+  ]
+}

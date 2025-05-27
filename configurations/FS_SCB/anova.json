@@ -23,10 +23,10 @@
       "learner_config" : {
         "l_rate": 1.8,
         "strategy": "AnovaF",
-        "num_features": 20,
+        "num_features": 40,
         "learn_rate": 200,
         "strat_params": {
-          "M": 20,
+          "M": 15,
           "s": 5,
           "warmup": 100
         }
@@ -50,10 +50,10 @@
       "learner_config" : {
         "l_rate": 1.8,
         "strategy": "theta_weights",
-        "num_features": 20,
+        "num_features": 40,
         "learn_rate": 200,
         "strat_params": {
-          "M": 20,
+          "M": 15,
           "s": 5,
           "warmup": 100
         }

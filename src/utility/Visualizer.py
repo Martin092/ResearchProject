@@ -170,22 +170,22 @@ class Visualizer:
         # self.do_export and plt.savefig(os.path.join(self.figures_dir, "simple_regret.png"), dpi=300, bbox_inches='tight', format='png')
         # self.do_show and plt.show()
         #
-        # plt.figure()
-        #
-        # for name in set(names):
-        #
-        #     time = data.loc[data['Name'] == name, 'Round'].to_numpy()
-        #     avg_regret = data.loc[data['Name'] == name,'avg_cum_avg_regret'].to_numpy()
-        #     std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
-        #
-        #     plt.plot(time, avg_regret, label=f"{name}")
-        #     plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
-        #
-        # plt.xlabel('Round t', fontsize=16)
-        # plt.ylabel('Average Regret', fontsize=16)
-        # plt.title("Average Regret across Rounds", fontsize=18)
-        # plt.legend()
-        # plt.tight_layout()
+        plt.figure()
 
-        # self.do_export and plt.savefig(os.path.join(self.figures_dir, "average_regret.png"), dpi=300, bbox_inches='tight', format='png')
-        # self.do_show and plt.show()
+        for name in set(names):
+
+            time = data.loc[data['Name'] == name, 'Round'].to_numpy()
+            avg_regret = data.loc[data['Name'] == name,'avg_cum_avg_regret'].to_numpy()
+            std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
+
+            plt.plot(time, avg_regret, label=f"{name}")
+            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
+
+        plt.xlabel('Round t', fontsize=16)
+        plt.ylabel('Average Regret', fontsize=16)
+        plt.title("Average Regret across Rounds", fontsize=18)
+        plt.legend()
+        plt.tight_layout()
+
+        self.do_export and plt.savefig(os.path.join(self.figures_dir, "average_regret.png"), dpi=300, bbox_inches='tight', format='png')
+        self.do_show and plt.show()

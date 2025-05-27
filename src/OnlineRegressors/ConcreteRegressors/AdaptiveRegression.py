@@ -96,6 +96,6 @@ class AdaptiveRegressor(Regressor):
         constraints = [expr <= rhs, expr >= -rhs]
 
         prob = cp.Problem(cp.Minimize(cp.norm(w, 1)), constraints)
-        prob.solve(solver=cp.ECOS, abstol=1e-8, reltol=1e-8, feastol=1e-8)
+        prob.solve(solver=cp.ECOS, abstol=1e-6, reltol=1e-6, feastol=1e-6)
 
         return w.value

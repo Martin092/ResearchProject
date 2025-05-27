@@ -1,80 +1,24 @@
 {
-  "name" : "Number of features comparison",
+  "name" : "Simulation Example",
 
   "export_figures" : true,
   "show_figures" : true,
 
   "simulations" : [
     {
-      "name" : "k=100",
+      "name" : "lr=400, C=0.1, delta=0.95",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
         "d" : 100,
-        "sparsity": 0.05,
+        "sparsity":0.05,
         "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "learn_rate": 400,
-        "reg": "AdaptiveRegressor",
-        "params_reg": {
-          "sigma": 0.01,
-          "k": 5,
-          "k0": 100,
-          "t0": 1,
-          "C": 0.1,
-          "delta": 0.95
-        }
-      }
-    },
-    {
-      "name" : "k=90",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "SquareCB",
-
-      "trials" : 10,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity": 0.05,
-        "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "learn_rate": 400,
-        "reg": "AdaptiveRegressor",
-        "params_reg": {
-          "sigma": 0.01,
-          "k": 5,
-          "k0": 90,
-          "t0": 1,
-          "C": 0.1,
-          "delta": 0.95
-        }
-      }
-    },
-    {
-      "name" : "k=80",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "SquareCB",
-
-      "trials" : 10,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity": 0.05,
-        "noise": 0.01,
-        "k": 100
+        "k": 10
       },
       "learner_config" : {
         "learn_rate": 400,
@@ -90,19 +34,19 @@
       }
     },
     {
-      "name" : "k=70",
+      "name" : "lr=400, C=0.1, delta=0.99",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
         "d" : 100,
-        "sparsity": 0.05,
+        "sparsity":0.05,
         "noise": 0.01,
-        "k": 100
+        "k": 10
       },
       "learner_config" : {
         "learn_rate": 400,
@@ -110,28 +54,83 @@
         "params_reg": {
           "sigma": 0.01,
           "k": 5,
-          "k0": 70,
+          "k0": 80,
           "t0": 1,
           "C": 0.1,
+          "delta": 0.99
+        }
+      }
+    },
+    {
+      "name" : "lr=400, C=0.1, delta=0.90",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 400,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.1,
+          "delta": 0.90
+        }
+      }
+    },
+    {
+      "name" : "lr=400, C=1, delta=0.95",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 400,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 1,
           "delta": 0.95
         }
       }
     },
-
     {
-      "name" : "k=60",
+      "name" : "lr=400, C=0.5, delta=0.99",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
         "d" : 100,
-        "sparsity": 0.05,
+        "sparsity":0.05,
         "noise": 0.01,
-        "k": 100
+        "k": 10
       },
       "learner_config" : {
         "learn_rate": 400,
@@ -139,10 +138,38 @@
         "params_reg": {
           "sigma": 0.01,
           "k": 5,
-          "k0": 60,
+          "k0": 80,
           "t0": 1,
-          "C": 0.1,
-          "delta": 0.95
+          "C": 0.5,
+          "delta": 0.99
+        }
+      }
+    },
+    {
+      "name" : "lr=400, C=0.05, delta=0.90",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 400,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.05,
+          "delta": 0.90
         }
       }
     }
