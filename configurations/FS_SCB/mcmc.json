@@ -1,0 +1,61 @@
+{
+  "name" : "Simulation Example",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "FS-SCB mcmc",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "mcmc",
+        "num_features": 50,
+        "learn_rate": 400,
+        "strat_params": {
+          "M": 15
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB - anova selection",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "AnovaF",
+        "num_features": 40,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 15,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    }
+  ]
+}

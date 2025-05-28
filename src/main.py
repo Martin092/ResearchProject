@@ -16,7 +16,7 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations/FS_SCB"
-    simulator = SettingsSimulator(settings_dir, "anova.json")
+    simulator = SettingsSimulator(settings_dir, "mcmc.json")
 
     simulator.simulate_all()
 

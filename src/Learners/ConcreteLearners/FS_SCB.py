@@ -26,7 +26,8 @@ class FSSquareCB(AbstractLearner):
             "all_subsets": self.all_subsets,
             "theta_weights": self.theta_weights, # M, warmup, s
             "theta_weights_exp": self.theta_weights,
-            "AnovaF": self.theta_weights
+            "AnovaF": self.theta_weights,
+            "mcmc": self.subset_features
           }
         self.learn_rate = params["learn_rate"]
         self.exp_recalculation = None
@@ -39,6 +40,15 @@ class FSSquareCB(AbstractLearner):
     def theta_weights(self):
         return np.ones((1, self.d), dtype=bool)
 
+    def subset_features(self):
+        arr = np.zeros((self.strat_params["M"], self.d), dtype=bool)
+        idx = np.arange(self.d)
+        for m in range(self.strat_params["M"]):
+            np.random.shuffle(idx)
+            arr[m][idx[:self.num_features]] = 1
+        return arr
+
+
     def theta_weights_warmed_up(self):
         assert self.strategy == "theta_weights_exp" or self.models.shape[0] == 1
         assert self.strategy == "theta_weights_exp" or len(self.oracles) == 1
@@ -50,6 +60,24 @@ class FSSquareCB(AbstractLearner):
         theta = self.oracles[0].w
         indices = np.argsort(np.abs(theta.flatten()))[self.d - self.num_features - s:]
         self.sample_models(M, indices)
+
+    def accept_prob(self, reward):
+        return np.exp((1/np.log(self.t+1)) * reward)
+
+    def mcmc_selection(self, x, y):
+        for m in range(self.strat_params["M"]):
+            S = self.models[m]
+            i = np.random.randint(0, self.d)
+            S_prime = S.copy()
+            S_prime[i] = 1 - S_prime[i] # flip the bit
+
+            y_new = self.oracles[m].predict(x)
+            p_accept = self.accept_prob(y_new) / self.accept_prob(y)
+            if np.random.uniform(0,1) < p_accept:
+                # print(f"Accepted from {y} to {} ")
+                self.models[m] = S_prime
+
+
 
     def anova_selection(self):
         assert self.strategy == "AnovaF"
@@ -146,6 +174,9 @@ class FSSquareCB(AbstractLearner):
 
             reward = env.reveal_reward(features)
             self.update_oracles(a_index, context, reward)
+
+            if self.strategy == "mcmc":
+                self.mcmc_selection(features, reward)
 
             env.record_regret(reward, [self.feature_map(a, context) for a in self.action_set])
 
