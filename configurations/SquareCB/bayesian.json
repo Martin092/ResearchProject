@@ -1,0 +1,55 @@
+{
+  "name" : "Bayesian SquareCB",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB - Bayesian",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "BayesianSelection",
+        "params_reg": {
+          "lambda_reg": 0.6
+        }
+      }
+    },
+    {
+      "name" : "SquareCB - Ridge",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 10
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "RidgeFSSCB",
+        "params_reg": {
+          "lambda_reg": 0.6
+        }
+      }
+    }
+  ]
+}

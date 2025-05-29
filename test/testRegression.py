@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.sparse as sp
 from src.OnlineRegressors.AbstractRegressor import Regressor
+from src.OnlineRegressors.ConcreteRegressors.BayesianSelection import BayesianSelection
 from src.OnlineRegressors.ConcreteRegressors.LinearRegression import LinearRegression
 from src.OnlineRegressors.ConcreteRegressors.RidgeRegression import OnlineRidge
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
@@ -75,8 +76,9 @@ params = {"sigma": noise,
           "delta": 0.05
     }
 
-reg1 = AdaptiveRegressor(d, params)
+# reg1 = AdaptiveRegressor(d, params)
 params_r = {"lambda_reg": 0.2}
+reg1 = BayesianSelection(d, params_r)
 reg2 = RidgeFSSCB(d, params_r)
 
 res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)

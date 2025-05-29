@@ -78,7 +78,6 @@ class FSSquareCB(AbstractLearner):
                 self.models[m] = S_prime
 
 
-
     def anova_selection(self):
         assert self.strategy == "AnovaF"
         assert self.models.shape[0] == 1
