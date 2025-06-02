@@ -15,10 +15,10 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/SquareCB"
-    simulator = SettingsSimulator(settings_dir, "bayesian.json")
+    settings_dir = "../configurations/FS_SCB"
+    simulator = SettingsSimulator(settings_dir, "gibbs_iterations.json")
 
-    simulator.simulate_all()
+    simulator.simulate_all("Effect of uncertainty in important features on FS-SCB")
 
 def simple_example():
     print("Beginning a Bandit Simulation")

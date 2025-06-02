@@ -1,0 +1,93 @@
+{
+  "name" : "Bayesian gibbs iterations",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "FS-SCB 10 gibbs iterations",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "bayesian",
+        "num_features": 60,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10,
+          "s": 5,
+          "warmup": 100,
+          "gibbs_iterations": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB 100 gibbs iterations",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "bayesian",
+        "num_features": 60,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10,
+          "s": 5,
+          "warmup": 100,
+          "gibbs_iterations": 100
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB 1000 gibbs iterations",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "bayesian",
+        "num_features": 60,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10,
+          "s": 5,
+          "warmup": 100,
+          "gibbs_iterations": 1000
+        }
+      }
+    }
+  ]
+}

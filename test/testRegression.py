@@ -51,13 +51,13 @@ def satisfies_RIP(X, w, eps, k):
 
 
 d = 100
-density = 0.1
-noise = 0.005
+density = 0.05
+noise = 0.01
 eps = 0.2
 k = int(density * d)
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
-n = 10000
+n = 1000
 print(n)
 
 w_star = sp.random(1, d, density=density)

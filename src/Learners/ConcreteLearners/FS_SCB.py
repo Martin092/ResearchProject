@@ -7,7 +7,7 @@ from math import comb
 
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
 from sklearn.feature_selection import SelectKBest, f_regression
-
+from src.utility.GibsSampler import gibbs
 
 class FSSquareCB(AbstractLearner):
     def __init__(self, T, params):
@@ -27,10 +27,10 @@ class FSSquareCB(AbstractLearner):
             "theta_weights": self.theta_weights, # M, warmup, s
             "theta_weights_exp": self.theta_weights,
             "AnovaF": self.theta_weights,
-            "mcmc": self.subset_features
+            "mcmc": self.subset_features,
+            "bayesian": self.theta_weights
           }
         self.learn_rate = params["learn_rate"]
-        self.exp_recalculation = None
 
         self.delta = 0.1
         self.G = 1
@@ -77,6 +77,44 @@ class FSSquareCB(AbstractLearner):
                 # print(f"Accepted from {y} to {} ")
                 self.models[m] = S_prime
 
+    def bayesian_selection(self):
+        assert self.strategy == "bayesian"
+        assert self.models.shape[0] == 1
+        assert len(self.oracles) == 1
+        assert len(self.oracle_weights) == 1
+
+        M = self.strat_params["M"]
+        s = self.strat_params["s"]
+        rho = 1e-4
+        c = 100000
+        noise = 0.01
+        iterations = self.strat_params["gibbs_iterations"]
+
+        rewards = list(map(lambda x: x[2], self.history))
+
+        ws, gammas, integral = gibbs(self.X, rewards, iterations, noise, c, rho)
+        indices = np.argsort(-integral)[:self.num_features + s]
+
+        integral = np.clip(integral, 0, np.inf)
+        print((integral / np.sum(integral))[indices][:10])
+        print("Mean is ", np.mean((integral / np.sum(integral))[indices]))
+
+
+        self.models = np.zeros((M, self.d), dtype=np.bool)
+        self.oracles = []
+        self.oracle_weights = np.ones(len(self.models))
+
+        self.models[0][indices[:self.num_features]] = True
+        self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
+
+        for i in range(1, M):
+            np.random.shuffle(indices)
+            self.models[i][indices[:self.num_features]] = True
+            self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
+
+        self.oracles = np.array(self.oracles)
+
+
 
     def anova_selection(self):
         assert self.strategy == "AnovaF"
@@ -103,7 +141,7 @@ class FSSquareCB(AbstractLearner):
         :param indices:
         :return:
         '''
-        assert len(indices) > self.num_features
+        assert len(indices) >= self.num_features
 
         self.models = np.zeros((M, self.d), dtype=np.bool)
         self.oracles = []
@@ -163,6 +201,8 @@ class FSSquareCB(AbstractLearner):
                 self.theta_weights_warmed_up()
             elif self.strategy == "AnovaF" and self.strat_params["warmup"] == t:
                 self.anova_selection()
+            elif self.strategy == "bayesian" and self.strat_params["warmup"] == t:
+                self.bayesian_selection()
 
             self.action_set = env.observe_actions()
 

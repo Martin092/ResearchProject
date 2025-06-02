@@ -1,0 +1,128 @@
+{
+  "name" : "Number of features comparison",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB k=80",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.1,
+          "delta": 0.95
+        }
+      }
+    },
+    {
+      "name" : "LinUCB",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 1
+      }
+    },
+    {
+      "name" : "ThomsonSampling",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "ThomsonSampling",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "regularization": 0.5
+      }
+    },
+    {
+      "name" : "FS-SCB Anova M=15",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "AnovaF",
+        "num_features": 80,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 15,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB random M=15",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 80,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 15
+        }
+      }
+    }
+  ]
+}

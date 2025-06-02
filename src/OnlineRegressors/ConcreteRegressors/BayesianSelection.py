@@ -15,6 +15,8 @@ class BayesianSelection(Regressor):
         self.gammas_probs = np.repeat(0.5, self.d)
         self.gammas = self.sample_gammas(self.gammas_probs)
         self.w = np.zeros(d)
+        self.integral = np.zeros(self.d)
+        self.mask = np.ones(self.d)
 
     def sample_gammas(self, gammas_probs):
         return [1 if np.random.rand() < p else 0 for p in gammas_probs]
@@ -53,7 +55,7 @@ class BayesianSelection(Regressor):
 
     def predict(self, x):
         assert x.ndim == 1
-        return np.dot(np.multiply(self.w, self.gammas), x)
+        return np.dot(np.multiply(self.w, self.mask), x)
 
     def update(self, x, pred, real):
         assert x.ndim == 1
@@ -64,6 +66,13 @@ class BayesianSelection(Regressor):
         for i in range(len(self.gammas_probs)):
             self.gammas_probs[i] = self.gamma_post(i, self.gammas_probs, self.gammas, self.w)
         self.gammas = self.sample_gammas(self.gammas_probs)
+
+        w_probs = np.zeros(self.d)
+        for i in range(len(w_probs)):
+            w_probs[i] = self.prob_w(self.w[i], self.gammas[i])
+        self.integral += self.w * self.gammas * w_probs * self.gammas_probs
+        self.mask = np.zeros(self.d)
+        self.mask[np.argsort(-self.integral)[:5]] = 1
 
         self.real_history = np.append(self.real_history, real)
         self.x_history = np.vstack((self.x_history, x))

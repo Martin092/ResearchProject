@@ -1,0 +1,134 @@
+{
+  "name" : "FS-SCB comparison of number of features",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "FS-SCB random 20 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 20,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB random 40 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 40,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB random 60 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 60,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB random 80 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 80,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    },
+    {
+      "name" : "FS-SCB random 100 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 1.8,
+        "strategy": "random",
+        "num_features": 100,
+        "learn_rate": 200,
+        "strat_params": {
+          "M": 10
+        }
+      }
+    }
+  ]
+}
