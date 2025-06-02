@@ -70,3 +70,6 @@ class SquareCBEnvironment(AbstractEnvironment):
     def observe_actions(self):
         actions = np.random.multivariate_normal(self.means, np.eye(self.k) * self.vars, size=self.d).reshape(self.k, self.d)
         return actions
+
+    def feat_mask(self):
+        return np.nonzero(self.true_theta.toarray())

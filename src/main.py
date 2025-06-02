@@ -1,5 +1,9 @@
+from tqdm import tqdm
+
 from Environments import LinearEnvironment
 from Learners import ETCLearner
+from Learners import FSSquareCB
+from src.Environments.LinearBandits.SquareCBEnvironment import SquareCBEnvironment
 from utility.Logger import ResultLogger
 from utility.SettingsSimulator import SettingsSimulator
 import matplotlib
@@ -15,10 +19,68 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/FS_SCB"
-    simulator = SettingsSimulator(settings_dir, "gibbs_iterations.json")
+    settings_dir = "../configurations/SquareCB"
+    simulator = SettingsSimulator(settings_dir, "bayesian.json")
 
-    simulator.simulate_all("Effect of uncertainty in important features on FS-SCB")
+    simulator.simulate_all("SquareCB with adaptive and bayesian oracle")
+
+    # fsscb_tune()
+
+def fsscb_tune():
+    print("Beginning FS-SCB fine tuning")
+
+
+    l_rates = [0.1, 0.5, 1, 2]
+    learn_rate = [500, 700, 800, 1000]
+
+    logger = ResultLogger("Fine Tuning of FS-SCB")
+    logger.new_log()
+
+    best_regret = float('inf')
+    best_l = 0
+    best_l2 = 0
+    for l in l_rates:
+        for l2 in learn_rate:
+
+            cum_regret = 0
+            for i in tqdm(range(5), f"l_rate={l}, learn_rate={l2}"):
+                env = SquareCBEnvironment({
+                    "d": 100,
+                    "sparsity": 0.05,
+                    "noise": 0.01,
+                    "k": 100
+                })
+
+                params = {
+                    "l_rate": l,
+                    "strategy": "bayesian",
+                    "num_features": 40,
+                    "learn_rate": l2,
+                    "strat_params": {
+                        "gibbs_iterations": 700,
+                        "M": 5,
+                        "s": 5,
+                        "warmup": 100
+                    }
+                }
+
+                learner = FSSquareCB(500, params)
+
+
+                learner.run(env, logger)
+                cum_regret += env.get_cumulative_regret()
+
+            cum_regret /= 5
+            print(f"l_rate={l}, learn_rate={l2}; regret={cum_regret}")
+            if cum_regret < best_regret:
+                best_l = l
+                best_l2 = l2
+                best_regret = cum_regret
+
+    print()
+    print(f"BEST l_rate={best_l}, learn_rate={best_l2}; regret={best_regret}")
+    print("Terminating the Bandit Simulation")
+
 
 def simple_example():
     print("Beginning a Bandit Simulation")

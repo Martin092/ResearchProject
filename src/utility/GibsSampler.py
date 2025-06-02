@@ -37,7 +37,7 @@ def w_post(X, y, gammas, noise, c, rho): # p(w | stuff)
 
 
 def gibbs(X, y, n, noise, c, rho):
-    gammas_probs = np.repeat(0.1, X.shape[1])
+    gammas_probs = np.repeat(1/X.shape[0], X.shape[1])
     gammas = sample_gammas(gammas_probs)
     ws = w_post(X, y, gammas, noise, c, rho)
 

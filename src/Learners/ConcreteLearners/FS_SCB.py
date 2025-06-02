@@ -8,6 +8,9 @@ from math import comb
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
 from sklearn.feature_selection import SelectKBest, f_regression
 from src.utility.GibsSampler import gibbs
+import matplotlib
+matplotlib.use("tkagg")
+import matplotlib.pyplot as plt
 
 class FSSquareCB(AbstractLearner):
     def __init__(self, T, params):
@@ -77,7 +80,7 @@ class FSSquareCB(AbstractLearner):
                 # print(f"Accepted from {y} to {} ")
                 self.models[m] = S_prime
 
-    def bayesian_selection(self):
+    def bayesian_selection(self, env):
         assert self.strategy == "bayesian"
         assert self.models.shape[0] == 1
         assert len(self.oracles) == 1
@@ -95,10 +98,23 @@ class FSSquareCB(AbstractLearner):
         ws, gammas, integral = gibbs(self.X, rewards, iterations, noise, c, rho)
         indices = np.argsort(-integral)[:self.num_features + s]
 
-        integral = np.clip(integral, 0, np.inf)
-        print((integral / np.sum(integral))[indices][:10])
-        print("Mean is ", np.mean((integral / np.sum(integral))[indices]))
-
+        # integral = np.clip(integral, 0, np.inf)
+        # print((integral / np.sum(integral))[indices][:10])
+        # pred = np.sort(indices[:5])
+        # real = np.sort(env.feat_mask()[1])
+        # coincide = 0
+        # for p in pred:
+        #     if p in real:
+        #         coincide += 1
+        #
+        # print(f"{coincide}/5 coincide")
+        # print("Mean is ", np.sum((integral / np.sum(integral))[indices][:5]))
+        # print(env.true_theta)
+        #
+        # plt.bar(np.arange(self.d), integral / np.sum(integral), label="p(gamma | ...)")
+        # plt.scatter(real, np.zeros(5), label="Non zero weights")
+        # plt.legend()
+        # plt.show()
 
         self.models = np.zeros((M, self.d), dtype=np.bool)
         self.oracles = []
@@ -116,7 +132,7 @@ class FSSquareCB(AbstractLearner):
 
 
 
-    def anova_selection(self):
+    def anova_selection(self, env):
         assert self.strategy == "AnovaF"
         assert self.models.shape[0] == 1
         assert len(self.oracles) == 1
@@ -128,6 +144,7 @@ class FSSquareCB(AbstractLearner):
         selector = SelectKBest(f_regression, k=self.num_features + s).fit(self.X, list(map(lambda x: x[2], self.history)))
         indices = selector.get_support()
         indices = [i for i, val in enumerate(indices) if val]
+
 
         self.sample_models(M, indices)
 
@@ -200,9 +217,9 @@ class FSSquareCB(AbstractLearner):
             elif self.strategy == "theta_weights_exp" and self.t & (self.t - 1) == 0:
                 self.theta_weights_warmed_up()
             elif self.strategy == "AnovaF" and self.strat_params["warmup"] == t:
-                self.anova_selection()
+                self.anova_selection(env)
             elif self.strategy == "bayesian" and self.strat_params["warmup"] == t:
-                self.bayesian_selection()
+                self.bayesian_selection(env)
 
             self.action_set = env.observe_actions()
 
