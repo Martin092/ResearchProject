@@ -57,7 +57,7 @@ eps = 0.2
 k = int(density * d)
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
-n = 1000
+n = 10000
 print(n)
 
 w_star = sp.random(1, d, density=density)
@@ -68,45 +68,52 @@ print("Xt satisfies RIP: ", satisfies_RIP(Xt, w_star, 1/5, 3*k))
 t0 = k * np.log(d) * np.log(n)
 print("t0 is ", t0)
 t0 = k
-params = {"sigma": noise,
-          "k": k,
-          "k0": int(0.5 * d),
+params = {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
           "t0": 1,
-          "C": 0.01,
-          "delta": 0.05
-    }
+          "C": 0.1,
+          "delta": 0.95,
+          "smart_sample": True
+        }
 
 # reg1 = AdaptiveRegressor(d, params)
-params_r = {"lambda_reg": 0.2}
+params_r = {"lambda_reg": 0.6, "k": 10}
 reg1 = BayesianSelection(d, params_r)
 reg2 = RidgeFSSCB(d, params_r)
+params["smart_sample"] = False
+reg3 = AdaptiveRegressor(d, params)
 
 res1, t1, reals1 = test_adaptive(Xt, reg1, d, density, noise, n, w_star=w_star)
 res2, t2, reals2 = test_adaptive(Xt, reg2, d, density, noise, n, w_star=w_star)
+res3, t3, reals3 = test_adaptive(Xt, reg3, d, density, noise, n, w_star=w_star)
 
 print(f"Adaptive runtime: {t1}")
 print(f"Ridge runtime: {t2}")
-
+print(f"Dumb adaptive runtime: {t3}")
 
 fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
-fig.suptitle(f"Comparison of FSLR and Ridge Regression (d={d}, s={int(d * density)})", fontsize=16)
+fig.suptitle(f"Comparison of FSSLR, Bayesian and Ridge Regression (d={d}, s={int(d * density)})", fontsize=16)
 
 # Plot MSE
-line1, = axs[0].plot(res1, label="POSLR")
+line1, = axs[0].plot(res1, label="Bayesian")
 line2, = axs[0].plot(res2, label="Ridge")
+line3, = axs[0].plot(res3, label="FSSLR")
 axs[0].set_xlabel("Rounds")
 axs[0].set_ylabel("MSE")
 axs[0].set_title("Average MSE")
 
 # Plot Regret
-axs[1].plot(np.sqrt(reg1.regret(w_star, reals=reals1)), label="POSLR")
+axs[1].plot(np.sqrt(reg1.regret(w_star, reals=reals1)), label="Bayesian")
 axs[1].plot(np.sqrt(reg2.regret(w_star)), label="Ridge")
+axs[1].plot(np.sqrt(reg3.regret(w_star)), label="FSSLR")
 axs[1].set_xlabel("Rounds")
 axs[1].set_ylabel("Regret")
 axs[1].set_title("Cumulative Regret")
 
 
-fig.legend([line1, line2], [f"FSLR with k={params['k0']}", "Ridge"], loc='lower center', ncol=2)
+fig.legend([line1, line2, line3], [f"Bayesian with k={params_r['k']}", "Ridge", f"FSSLR with k={params['k0']}"], loc='lower center', ncol=2)
 
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.show()

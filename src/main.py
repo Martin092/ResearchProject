@@ -19,10 +19,10 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/SquareCB"
-    simulator = SettingsSimulator(settings_dir, "bayesian.json")
+    settings_dir = "../configurations/paper_figures"
+    simulator = SettingsSimulator(settings_dir, "full_comparison_k=80.json")
 
-    simulator.simulate_all("SquareCB with adaptive and bayesian oracle")
+    simulator.simulate_all("Cumulative regret with k=80")
 
     # fsscb_tune()
 

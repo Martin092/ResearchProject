@@ -89,7 +89,7 @@ class FSSquareCB(AbstractLearner):
         M = self.strat_params["M"]
         s = self.strat_params["s"]
         rho = 1e-4
-        c = 100000
+        c = 10000
         noise = 0.01
         iterations = self.strat_params["gibbs_iterations"]
 

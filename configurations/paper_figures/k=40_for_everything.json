@@ -6,7 +6,32 @@
 
   "simulations" : [
     {
-      "name" : "SquareCB",
+      "name" : "SquareCB - Bayesian",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 10,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "BayesianSelection",
+        "params_reg": {
+          "lambda_reg": 0.6,
+          "k": 40,
+          "full_x": false
+        }
+      }
+    },
+    {
+      "name" : "SquareCB - FSSLR",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
@@ -75,7 +100,7 @@
       }
     },
     {
-      "name" : "FS-SCB Anova M=15",
+      "name" : "Bayesian FS-SCB M=15",
 
       "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
@@ -90,11 +115,12 @@
         "k": 100
       },
       "learner_config" : {
-        "l_rate": 1.8,
-        "strategy": "AnovaF",
+        "l_rate": 0.5,
+        "strategy": "bayesian",
         "num_features": 40,
-        "learn_rate": 200,
+        "learn_rate": 800,
         "strat_params": {
+          "gibbs_iterations": 1000,
           "M": 15,
           "s": 5,
           "warmup": 100

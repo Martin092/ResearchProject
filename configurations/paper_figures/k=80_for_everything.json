@@ -90,11 +90,12 @@
         "k": 100
       },
       "learner_config" : {
-        "l_rate": 1.8,
-        "strategy": "AnovaF",
+        "l_rate": 0.5,
+        "strategy": "bayesian",
         "num_features": 80,
-        "learn_rate": 200,
+        "learn_rate": 800,
         "strat_params": {
+          "gibbs_iterations": 1000,
           "M": 15,
           "s": 5,
           "warmup": 100
