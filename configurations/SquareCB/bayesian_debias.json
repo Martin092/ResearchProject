@@ -7,7 +7,7 @@
   "simulations" : [
 
     {
-      "name" : "SquareCB - with projected matrix debiased",
+      "name" : "SquareCB - debiasing",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
@@ -25,15 +25,15 @@
         "learn_rate": 200,
         "reg": "BayesianSelection",
         "params_reg": {
-          "full_x": false,
           "debias": true,
+          "full_x": false,
           "lambda_reg": 0.6,
           "k": 70
         }
       }
     },
     {
-      "name" : "SquareCB - with full matrix debiased",
+      "name" : "SquareCB - no debiasing",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
@@ -52,7 +52,8 @@
         "reg": "BayesianSelection",
         "params_reg": {
           "lambda_reg": 0.6,
-          "debias": true,
+          "debias": false,
+          "full_x": false,
           "k": 70
         }
       }

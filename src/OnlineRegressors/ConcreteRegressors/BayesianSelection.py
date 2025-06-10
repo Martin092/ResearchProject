@@ -75,17 +75,19 @@ class BayesianSelection(Regressor):
             w_probs[i] = self.prob_w(self.w[i], self.gammas[i])
         self.integral += self.w * self.gammas * w_probs * self.gammas_probs
         self.mask = np.zeros(self.d)
-        self.mask[np.argsort(-self.integral)[:self.k]] = 1
+        sorted_idx = np.argsort(-self.integral)[:self.k]
+        self.mask[sorted_idx] = 1
 
         if not self.full_x:
             x = np.multiply(x, self.mask)
 
         if self.debias:
-            integral = np.clip(self.integral, 0, np.inf)
-            integral /= np.sum(integral)
-            inv = 1/integral
-            inv[np.isinf(inv)] = 0
-            x = np.multiply(inv, x)
+            # integral = np.clip(self.integral, 0, np.inf)
+            # integral /= np.sum(integral)
+            # inv = 1/integral
+            # inv[np.isinf(inv)] = 0
+            # x = np.multiply(inv, x)
+            x[sorted_idx[5:]] *= self.d/(self.k - 5)
 
         self.real_history = np.append(self.real_history, real)
         self.x_history = np.vstack((self.x_history, x))

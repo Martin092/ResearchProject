@@ -20,9 +20,9 @@ def main():
 def complex_simulation():
 
     settings_dir = "../configurations/paper_figures"
-    simulator = SettingsSimulator(settings_dir, "full_comparison_k=80.json")
+    simulator = SettingsSimulator(settings_dir, "SquareCB_diff_k_bayesian.json")
 
-    simulator.simulate_all("Cumulative regret with k=80")
+    simulator.simulate_all("Bayesian SquareCB feature comparison")
 
     # fsscb_tune()
 
