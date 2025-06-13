@@ -1,0 +1,149 @@
+{
+  "name" : "FS-SCB comparison of number of features",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "Bayesian FS-SCB 2 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 2,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 10,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB 5 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 5,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 10,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB 10 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 10,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 10,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB 15 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 15,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 10,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB 20 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 20,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 10,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    }
+  ]
+}

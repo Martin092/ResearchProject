@@ -19,10 +19,10 @@ def main():
 
 def complex_simulation():
 
-    settings_dir = "../configurations/paper_figures"
-    simulator = SettingsSimulator(settings_dir, "SquareCB_diff_k_bayesian.json")
+    settings_dir = "../configurations/FS_SCB"
+    simulator = SettingsSimulator(settings_dir, "anovak.json")
 
-    simulator.simulate_all("Bayesian SquareCB feature comparison")
+    simulator.simulate_all("Bayesian FS-SCB comparison of warmup times")
 
     # fsscb_tune()
 

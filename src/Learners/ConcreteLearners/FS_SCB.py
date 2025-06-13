@@ -35,6 +35,8 @@ class FSSquareCB(AbstractLearner):
           }
         self.learn_rate = params["learn_rate"]
 
+        self.w_plot = []
+        self.w_index = 0
         self.delta = 0.1
         self.G = 1
         self.S = 1
@@ -208,6 +210,11 @@ class FSSquareCB(AbstractLearner):
         assert len(self.oracles) == len(self.models)
         assert len(self.oracle_weights) == len(self.models)
 
+        for i, w in enumerate(env.true_theta.toarray()[0]):
+            if w != 0:
+                self.w_index = i-1
+                break
+
     def run(self, env : AbstractEnvironment, logger = None):
         self.setup(env)
 
@@ -229,7 +236,7 @@ class FSSquareCB(AbstractLearner):
             self.X = np.vstack((self.X, features))
 
             reward = env.reveal_reward(features)
-            self.update_oracles(a_index, context, reward)
+            self.update_oracles(a_index, context, reward, env)
 
             if self.strategy == "mcmc":
                 self.mcmc_selection(features, reward)
@@ -285,7 +292,7 @@ class FSSquareCB(AbstractLearner):
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
         return index, self.action_set[index], rewards[index]
 
-    def update_oracles(self, action_index, context, real_reward):
+    def update_oracles(self, action_index, context, real_reward, env):
         feat = self.feature_map(self.action_set[action_index], context)
         r_max = self.rmax()
         r_min = -r_max
@@ -298,6 +305,21 @@ class FSSquareCB(AbstractLearner):
 
             # TODO Weights use a scaled predictions, this is possibly bad. Not sure
             self.oracle_weights[i] *= np.exp(-2 * (real_scaled - (pred - r_min) / (r_max - r_min))**2)
+
+
+        # mean = 0
+        # w_sum = np.sum(self.oracle_weights)
+        # vs = self.oracle_weights / w_sum
+        # for i, oracle in enumerate(self.oracles):
+        #     mean += vs[i] * oracle.w[self.w_index]
+        # self.w_plot.append(mean)
+        # if self.t == 999:
+        #     plt.plot(self.w_plot)
+        #     plt.plot(np.arange(self.t), np.repeat(env.true_theta.toarray()[0][self.w_index], self.t))
+        #     plt.title("Value of a random weight")
+        #     plt.xlabel("Rounds")
+        #     plt.ylabel("Value of weight")
+        #     plt.show()
 
     def rmax(self):
         delta = self.delta
@@ -328,6 +350,7 @@ class FSSquareCB(AbstractLearner):
 
         w_sum = np.sum(self.oracle_weights)
         vs = self.oracle_weights / w_sum
+
 
         delta0 = 0
         delta1 = 0

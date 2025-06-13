@@ -6,13 +6,13 @@
 
   "simulations" : [
     {
-      "name" : "FS-SCB - bayesian selection",
+      "name" : "FS-SCB - bayesian selection tw=250",
 
       "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
 
-      "trials" : 10,
-      "horizon" : 1000,
+      "trials" : 5,
+      "horizon" : 3000,
 
       "env_config" : {
         "d" : 100,
@@ -23,24 +23,24 @@
       "learner_config" : {
         "l_rate": 0.5,
         "strategy": "bayesian",
-        "num_features": 60,
+        "num_features": 40,
         "learn_rate": 800,
         "strat_params": {
           "gibbs_iterations": 1000,
           "M": 10,
           "s": 5,
-          "warmup": 250
+          "warmup": 100
         }
       }
     },
     {
-      "name" : "FS-SCB - anova selection",
+      "name" : "FS-SCB - bayesian selection tw=100",
 
       "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
 
-      "trials" : 10,
-      "horizon" : 1000,
+      "trials" : 5,
+      "horizon" : 3000,
 
       "env_config" : {
         "d" : 100,
@@ -50,13 +50,14 @@
       },
       "learner_config" : {
         "l_rate": 0.5,
-        "strategy": "AnovaF",
-        "num_features": 60,
-        "learn_rate": 700,
+        "strategy": "bayesian",
+        "num_features": 40,
+        "learn_rate": 800,
         "strat_params": {
+          "gibbs_iterations": 1000,
           "M": 10,
           "s": 5,
-          "warmup": 250
+          "warmup": 100
         }
       }
     }
