@@ -109,7 +109,7 @@ class Visualizer:
             std_reward = data.loc[data['Name'] == name,'std_cum_reward'].to_numpy()
 
             plt.plot(time, reward, label=f"{name}")
-            plt.fill_between(time, reward - std_reward, reward + std_reward, alpha=0.1)
+            plt.fill_between(time, reward - std_reward, reward + std_reward, alpha=0.3)
 
         plt.xlabel('Round t', fontsize=16)
         plt.ylabel('Cumulative Reward', fontsize=16)
@@ -121,18 +121,23 @@ class Visualizer:
         self.do_show and (plt.show())
 
     def _generate_regret_graphs(self, data, plot_name=None):
+        line_styles = ['-', '--', '-.', ':']
+        markers = ['o', 's', 'D', '^', 'v', '*', 'P', 'X']
 
         names = data['Name'].to_numpy()
 
         plt.figure()
+        plt.grid()
 
-        for name in set(names):
+        for i, name in enumerate(set(names)):
             time = data.loc[data['Name'] == name,'Round'].to_numpy()
             cum_regret = data.loc[data['Name'] == name,'avg_cum_regret'].to_numpy()
             std_cum_regret = data.loc[data['Name'] == name,'std_cum_regret'].to_numpy()
 
-            plt.plot(time, cum_regret, label=f"{name}")
-            plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.1)
+            style = line_styles[i % len(line_styles)]
+            marker = markers[i % len(markers)]
+            plt.plot(time, cum_regret, label=f"{name}", linestyle=style, marker=marker, markevery=200)
+            plt.fill_between(time, cum_regret - std_cum_regret, cum_regret + std_cum_regret, alpha=0.2)
 
         # plt.xlabel('Round', fontsize=16)
         # plt.ylabel('Cumulative Regret', fontsize=16)
@@ -171,15 +176,19 @@ class Visualizer:
         # self.do_show and plt.show()
         #
         plt.figure()
+        plt.grid()
 
-        for name in set(names):
+
+        for i, name in enumerate(set(names)):
 
             time = data.loc[data['Name'] == name, 'Round'].to_numpy()
             avg_regret = data.loc[data['Name'] == name,'avg_cum_avg_regret'].to_numpy()
             std_avg_regret = data.loc[data['Name'] == name,'std_cum_avg_regret'].to_numpy()
 
-            plt.plot(time, avg_regret, label=f"{name}")
-            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.1)
+            style = line_styles[i % len(line_styles)]
+            marker = markers[i % len(markers)]
+            plt.plot(time, avg_regret, label=f"{name}", linestyle=style, marker=marker, markevery=200)
+            plt.fill_between(time, avg_regret - std_avg_regret, avg_regret + std_avg_regret, alpha=0.2)
 
         plt.xlabel('Round t', fontsize=16)
         plt.ylabel('Average Regret', fontsize=16)

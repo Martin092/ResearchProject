@@ -99,12 +99,12 @@ class SettingsSimulator:
 
         self.curr_simulation += 1
 
-    def simulate_all(self, plot_name=None):
+    def simulate_all(self):
 
         while self._has_next_simulation():
             self.simulate_next()
 
-        self.visualizer.generate_graphs(plot_name)
+        self.visualizer.generate_graphs(self.name)
 
     def _has_next_simulation(self):
         return self.curr_simulation < self.num_simulations

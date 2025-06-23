@@ -57,7 +57,7 @@ eps = 0.2
 k = int(density * d)
 n = int((1 / (eps * eps)) * k * np.log(eps * d / k))
 n *= 2
-n = 10000
+n = 5000
 print(n)
 
 w_star = sp.random(1, d, density=density)

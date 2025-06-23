@@ -1,49 +1,48 @@
 {
-  "name" : "LinUCB against ETC",
+  "name" : "Cumulative Regret",
 
   "export_figures" : true,
   "show_figures" : true,
 
   "simulations" : [
     {
-      "name" : "UCB",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "UCBLearner",
-
-      "trials" : 15,
-      "horizon" : 10000,
-
-      "env_config" : {
-        "d" : 3,
-        "sparsity": 1,
-        "noise": 0.01,
-        "k": 5
-      },
-      "learner_config" : {
-        "delta": 0.01,
-        "regularization": 1
-      }
-    },
-    {
-      "name" : "LinUCB - 1",
+      "name" : "LinUCB",
 
       "env" : "SquareCBEnvironment",
       "learner" : "LinUCBLearner",
 
-      "trials" : 15,
-      "horizon" : 10000,
+      "trials" : 10,
+      "horizon" : 1000,
 
       "env_config" : {
-        "d" : 3,
-        "sparsity": 1,
+        "d" : 100,
+        "sparsity": 0.05,
         "noise": 0.01,
-        "k": 5
+        "k": 100
       },
       "learner_config" : {
-        "delta": 0.01,
-        "regularization": 0.7
+        "delta": 0.95,
+        "regularization": 1
       }
-    }
+    },
+    {
+          "name" : "Random",
+
+          "env" : "SquareCBEnvironment",
+          "learner" : "EGreedyLearner",
+
+          "trials" : 10,
+          "horizon" : 1000,
+
+          "env_config" : {
+            "d" : 100,
+            "sparsity": 0.05,
+            "noise": 0.01,
+            "k": 100
+          },
+          "learner_config" : {
+            "epsilon": 1
+          }
+        }
   ]
 }

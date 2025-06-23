@@ -8,8 +8,6 @@ from math import comb
 from src.OnlineRegressors.ConcreteRegressors.OnlineRidgeFSSCB import RidgeFSSCB
 from sklearn.feature_selection import SelectKBest, f_regression
 from src.utility.GibsSampler import gibbs
-import matplotlib
-matplotlib.use("tkagg")
 import matplotlib.pyplot as plt
 
 class FSSquareCB(AbstractLearner):
@@ -24,6 +22,7 @@ class FSSquareCB(AbstractLearner):
         self.num_features = params["num_features"]
         self.strategy = params["strategy"]
         self.strat_params = params["strat_params"]
+        self.aggregate_method = params.get("aggregate_method", "adv")
         self.strat_map = {
             "random": self.random_model_generator,
             "all_subsets": self.all_subsets,
@@ -34,6 +33,8 @@ class FSSquareCB(AbstractLearner):
             "bayesian": self.theta_weights
           }
         self.learn_rate = params["learn_rate"]
+        self.oracle_probs = None
+        self.log_likelihood = None
 
         self.w_plot = []
         self.w_index = 0
@@ -121,6 +122,8 @@ class FSSquareCB(AbstractLearner):
         self.models = np.zeros((M, self.d), dtype=np.bool)
         self.oracles = []
         self.oracle_weights = np.ones(len(self.models))
+        self.oracle_probs = np.ones(len(self.models)) / len(self.models)
+        self.log_likelihood = np.zeros(len(self.models))
 
         self.models[0][indices[:self.num_features]] = True
         self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
@@ -207,6 +210,10 @@ class FSSquareCB(AbstractLearner):
             self.oracles.append(RidgeFSSCB(self.d, {"lambda_reg": self.l_rate}))
         self.oracles = np.array(self.oracles)
         self.oracle_weights = np.ones(len(self.models))
+
+        self.oracle_probs = np.ones(len(self.models)) / len(self.models)
+        self.log_likelihood = np.zeros(len(self.models))
+
         assert len(self.oracles) == len(self.models)
         assert len(self.oracle_weights) == len(self.models)
 
@@ -271,9 +278,15 @@ class FSSquareCB(AbstractLearner):
             y = self.aggregate_rewards(expert_rewards)
             rewards[i] = y
 
+
         best_action_idx = np.argmax(rewards)
         best_reward = rewards[best_action_idx]
+
         gaps = rewards - best_reward
+        # gaps = best_reward - rewards
+        # print()
+        # print(best_reward)
+        # print(self.oracle_probs)
 
         probabilities = np.zeros(len(self.action_set))
 
@@ -281,18 +294,43 @@ class FSSquareCB(AbstractLearner):
             if i != best_action_idx:
                 probabilities[i] = 1.0 / (self.k + self.learn_rate * gaps[i])
 
-        if np.sum(probabilities) > 0:
+        if np.sum(probabilities) > 1:
             probabilities = probabilities / np.sum(probabilities)
 
         probabilities[best_action_idx] = 1.0 - np.sum(probabilities)
 
-        probabilities = np.clip(probabilities, 0, 1)
+        probabilities = np.clip(probabilities, 0, np.inf)
         probabilities = probabilities / np.sum(probabilities)
+
 
         index = np.random.choice(np.arange(self.k), size=1, p=probabilities)[0]
         return index, self.action_set[index], rewards[index]
+    def update_bayesian(self, action_index, context, real_reward, env):
+        var = 1
+        feat = self.feature_map(self.action_set[action_index], context)
+        const = - np.log(np.sqrt(2 * np.pi * var))
+        for i, oracle in enumerate(self.oracles):
+            feat_subset = np.copy(feat)
+            feat_subset[~self.models[i]] = 0
+            pred = oracle.predict(feat_subset)
+            oracle.update(feat_subset, pred, real_reward)
+
+            self.log_likelihood[i] += const - ((real_reward - pred) ** 2) / (2 * var)
+
+        for i, oracle in enumerate(self.oracles):
+            self.oracle_probs[i] = self.log_likelihood[i] + np.log(self.oracle_probs[i])
+        # self.oracle_probs -= np.sum(self.oracle_probs)
+        self.oracle_probs = np.exp(self.oracle_probs)
+        self.oracle_probs /= np.sum(self.oracle_probs)
+
 
     def update_oracles(self, action_index, context, real_reward, env):
+        if self.aggregate_method == "adv":
+            self.update_adv(action_index, context, real_reward)
+        elif self.aggregate_method == "bayesian":
+            self.update_bayesian(action_index, context, real_reward, env)
+
+    def update_adv(self, action_index, context, real_reward):
         feat = self.feature_map(self.action_set[action_index], context)
         r_max = self.rmax()
         r_min = -r_max
@@ -304,9 +342,7 @@ class FSSquareCB(AbstractLearner):
             oracle.update(feat_subset, pred, real_reward)
 
             # TODO Weights use a scaled predictions, this is possibly bad. Not sure
-            self.oracle_weights[i] *= np.exp(-2 * (real_scaled - (pred - r_min) / (r_max - r_min))**2)
-
-
+            self.oracle_weights[i] *= np.exp(-2 * (real_scaled - (pred - r_min) / (r_max - r_min)) ** 2)
         # mean = 0
         # w_sum = np.sum(self.oracle_weights)
         # vs = self.oracle_weights / w_sum
@@ -329,47 +365,39 @@ class FSSquareCB(AbstractLearner):
         return G + L * np.sqrt(self.d * np.log((1 + self.t * (L ** 2) / (self.l_rate * self.d)) / delta)) + L * S * np.sqrt(self.l_rate)
 
     def aggregate_rewards(self, rewards):
+        if self.aggregate_method == "adv":
+            return self.adv_aggregate(rewards)
+        elif self.aggregate_method == "bayesian":
+            return self.bayesian_aggregate(rewards)
+        else:
+            raise Exception("No such aggregation method exists")
+
+    def bayesian_aggregate(self, rewards):
+        return np.dot(self.oracle_probs, rewards) / np.sum(self.oracle_probs)
+
+    def adv_aggregate(self, rewards):
         r_max = self.rmax()
         r_min = -r_max
-
-        # print(r_max)
-        # print(max(rewards))
-        # print(min(rewards))
-        # print("----------------------")
-
-        # TODO this will be called for each action, maybe it removes too many models
         good_models = (r_min <= rewards) & (rewards <= r_max)
         if np.sum(good_models) != len(self.models):
             print("Removed ", len(self.models) - np.sum(good_models))
             print()
-
         self.models = self.models[good_models]
         self.oracle_weights = self.oracle_weights[good_models]
         self.oracles = self.oracles[good_models]
         hs = (rewards[good_models] - r_min) / ((r_max - r_min))
-
         w_sum = np.sum(self.oracle_weights)
         vs = self.oracle_weights / w_sum
-
-
         delta0 = 0
         delta1 = 0
-
         for i, v in enumerate(vs):
             delta0 += v * np.exp(-2 * (hs[i] ** 2))
             delta1 += v * np.exp(-2 * ((1 - hs[i]) ** 2))
-
         delta0 = -0.5 * np.log(delta0)
         delta1 = -0.5 * np.log(delta1)
-
         pred_min = 1 - np.sqrt(delta1)
         pred_max = np.sqrt(delta0)
-
         y_final = (pred_max + pred_min) / 2.0
-        # print(y_final)
-        # print(pred_max)
-        # print(pred_min)
-        # print()
         assert pred_min - 1e-6 <= y_final <= pred_max + 1e-6
         return y_final * (r_max - r_min) + r_min
 

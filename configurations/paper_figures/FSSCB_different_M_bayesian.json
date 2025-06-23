@@ -1,5 +1,5 @@
 {
-  "name" : "FS-SCB comparison of number of models",
+  "name" : "Bayesian FS-SCB comparison of number of models (d=100, k=60, K=100, M=10, s=5)",
 
   "export_figures" : true,
   "show_figures" : true,

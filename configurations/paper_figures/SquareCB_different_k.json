@@ -1,5 +1,5 @@
 {
-  "name" : "Number of features comparison",
+  "name" : "FSSLR SquareCB - Number of features comparison (d=100, s=5, K=100)",
 
   "export_figures" : true,
   "show_figures" : true,

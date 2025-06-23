@@ -1,0 +1,85 @@
+{
+  "name" : "Regret in Bayesian FS-SCB",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "LinUCB",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 1
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB M=15, 40 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 40,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 15,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    },
+    {
+      "name" : "Bayesian FS-SCB M=15, 80 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "FSSquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity":0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "l_rate": 0.5,
+        "strategy": "bayesian",
+        "num_features": 80,
+        "learn_rate": 800,
+        "strat_params": {
+          "gibbs_iterations": 1000,
+          "M": 15,
+          "s": 5,
+          "warmup": 100
+        }
+      }
+    }
+  ]
+}

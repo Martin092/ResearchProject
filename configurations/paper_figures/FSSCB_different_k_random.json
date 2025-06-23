@@ -1,5 +1,5 @@
 {
-  "name" : "FS-SCB comparison of number of features",
+  "name" : "Random FS-SCB comparison of number of features (d=100, K=100, M=10, s=5)",
 
   "export_figures" : true,
   "show_figures" : true,

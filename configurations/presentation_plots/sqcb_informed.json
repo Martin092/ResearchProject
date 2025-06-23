@@ -1,17 +1,17 @@
 {
-  "name" : "Bayesian SquareCB - full against projected matrix (d=100, s=5, k=60, K=100)",
+  "name" : "Regret in Bayesian SquareCB",
 
   "export_figures" : true,
   "show_figures" : true,
 
   "simulations" : [
     {
-      "name" : "SquareCB - Bayesian with partial X",
+      "name" : "SquareCB - Bayesian, 40 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
@@ -25,18 +25,18 @@
         "reg": "BayesianSelection",
         "params_reg": {
           "lambda_reg": 0.6,
-          "k": 60,
+          "k": 40,
           "full_x": false
         }
       }
     },
     {
-      "name" : "SquareCB - Bayesian with full X",
+      "name" : "SquareCB - Bayesian, 80 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
@@ -50,9 +50,29 @@
         "reg": "BayesianSelection",
         "params_reg": {
           "lambda_reg": 0.6,
-          "k": 60,
-          "full_x": true
+          "k": 80,
+          "full_x": false
         }
+      }
+    },
+    {
+      "name" : "LinUCB",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 1
       }
     }
   ]

@@ -1,0 +1,85 @@
+{
+  "name" : "Regret in random SquareCB",
+
+  "export_figures" : true,
+  "show_figures" : true,
+
+  "simulations" : [
+    {
+      "name" : "SquareCB Sparse LR - 80 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.1,
+          "delta": 0.95
+        }
+      }
+    },
+    {
+      "name" : "SquareCB Sparse LR - 40 features",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "SquareCB",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "learn_rate": 200,
+        "reg": "AdaptiveRegressor",
+        "params_reg": {
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 40,
+          "t0": 1,
+          "C": 0.1,
+          "delta": 0.95
+        }
+      }
+    },
+   {
+      "name" : "LinUCB",
+
+      "env" : "SquareCBEnvironment",
+      "learner" : "LinUCBLearner",
+
+      "trials" : 5,
+      "horizon" : 1000,
+
+      "env_config" : {
+        "d" : 100,
+        "sparsity": 0.05,
+        "noise": 0.01,
+        "k": 100
+      },
+      "learner_config" : {
+        "delta": 0.95,
+        "regularization": 1
+      }
+    }
+  ]
+}

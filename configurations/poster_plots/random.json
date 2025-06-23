@@ -1,17 +1,17 @@
 {
-  "name" : "Number of features comparison",
+  "name" : "Regret in random SquareCB",
 
   "export_figures" : true,
   "show_figures" : true,
 
   "simulations" : [
     {
-      "name" : "SquareCB - Bayesian",
+      "name" : "SquareCB Sparse LR - 80 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
 
-      "trials" : 10,
+      "trials" : 5,
       "horizon" : 1000,
 
       "env_config" : {
@@ -22,16 +22,19 @@
       },
       "learner_config" : {
         "learn_rate": 200,
-        "reg": "BayesianSelection",
+        "reg": "AdaptiveRegressor",
         "params_reg": {
-          "lambda_reg": 0.6,
-          "k": 40,
-          "full_x": false
+          "sigma": 0.01,
+          "k": 5,
+          "k0": 80,
+          "t0": 1,
+          "C": 0.1,
+          "delta": 0.95
         }
       }
     },
     {
-      "name" : "SquareCB - FSSLR",
+      "name" : "SquareCB Sparse LR - 40 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "SquareCB",
@@ -58,7 +61,7 @@
         }
       }
     },
-    {
+   {
       "name" : "LinUCB",
 
       "env" : "SquareCBEnvironment",
@@ -74,33 +77,12 @@
         "k": 100
       },
       "learner_config" : {
-        "features_subset": 40,
         "delta": 0.95,
         "regularization": 1
       }
     },
     {
-      "name" : "ThomsonSampling",
-
-      "env" : "SquareCBEnvironment",
-      "learner" : "ThomsonSampling",
-
-      "trials" : 5,
-      "horizon" : 1000,
-
-      "env_config" : {
-        "d" : 100,
-        "sparsity": 0.05,
-        "noise": 0.01,
-        "k": 100
-      },
-      "learner_config" : {
-        "features_subset": 40,
-        "regularization": 0.5
-      }
-    },
-    {
-      "name" : "Bayesian FS-SCB M=15",
+      "name" : "Random FS-SCB M=15 40 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
@@ -116,7 +98,7 @@
       },
       "learner_config" : {
         "l_rate": 0.5,
-        "strategy": "bayesian",
+        "strategy": "random",
         "num_features": 40,
         "learn_rate": 800,
         "strat_params": {
@@ -128,7 +110,7 @@
       }
     },
     {
-      "name" : "FS-SCB random M=15",
+      "name" : "Random FS-SCB M=15 80 features",
 
       "env" : "SquareCBEnvironment",
       "learner" : "FSSquareCB",
@@ -143,12 +125,15 @@
         "k": 100
       },
       "learner_config" : {
-        "l_rate": 1.8,
+        "l_rate": 0.5,
         "strategy": "random",
-        "num_features": 40,
-        "learn_rate": 200,
+        "num_features": 80,
+        "learn_rate": 800,
         "strat_params": {
-          "M": 15
+          "gibbs_iterations": 1000,
+          "M": 15,
+          "s": 5,
+          "warmup": 100
         }
       }
     }
